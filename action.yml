@@ -1,0 +1,27 @@
+name: 'Claude Code GitHub Agent'
+description: 'AI Agent that operates Claude Code on GitHub'
+author: 'Claude Agent'
+branding:
+  icon: 'message-circle'
+  color: 'purple'
+
+inputs:
+  github-token:
+    description: 'Specify the GitHub Token'
+    required: true
+  anthropic-api-key:
+    description: 'Specify the Anthropic API Key'
+    required: true
+  event-path:
+    description: 'Specify the path to the GitHub Event JSON file'
+    default: ${{ github.event_path }}
+    required: false
+  timeout:
+    description: 'Specify timeout duration (seconds)'
+    default: '300'
+    required: false
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+  pre: 'npm ci && npm run build && npm run setting'
