@@ -22,11 +22,7 @@ RUN npm ci
 # ソースコードをコピー
 COPY . .
 
-# TypeScriptをコンパイル
-RUN npm run build
-
-# Claude CLIの設定
-RUN npm run setting
+RUN sh -c "npm run build && npm run setting"
 
 # エントリポイントの設定
 ENTRYPOINT ["node", "/app/dist/index.js"]
