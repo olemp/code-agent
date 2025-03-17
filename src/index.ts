@@ -75,9 +75,9 @@ async function run(): Promise<void> {
     // Load event data
     const eventPayload = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
     
+    console.log(eventPayload);
     // Determine event type
     const event = getEventType(eventPayload);
-    console.log(event);
     if (!event) {
       core.info('Unsupported event type');
       return;
