@@ -22,7 +22,7 @@ RUN npm ci
 # ソースコードをコピー
 COPY . .
 
-RUN sh -c "npm run build && npm run setting"
+RUN npm run build
 
 # エントリポイントの設定
 ENTRYPOINT ["node", "/app/dist/index.js"]
