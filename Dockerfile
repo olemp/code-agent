@@ -22,6 +22,8 @@ RUN npm ci
 # ソースコードをコピー
 COPY . .
 
+RUN npm install -g @anthropic-ai/claude-code
+
 RUN npm run build
 
 # エントリポイントの設定
