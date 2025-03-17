@@ -4,7 +4,11 @@ FROM node:20-slim
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    zsh \
+    jq \
     && rm -rf /var/lib/apt/lists/*
+
+ENV SHELL /bin/zsh
 
 # アプリケーションディレクトリを作成
 WORKDIR /app
