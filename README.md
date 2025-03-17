@@ -16,6 +16,7 @@ An AI Agent that operates Claude Code on GitHub Actions. By using this action, y
 name: Claude Code GitHub Agent
 
 permissions:
+  contents: read
   pull-requests: write
   issues: write
 
