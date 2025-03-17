@@ -311,7 +311,8 @@ function runClaudeCode(prompt: string, timeout: number): string {
   const claudeResult = execaSync({
     preferLocal: true,
     timeout: timeout, // ms,
-    cwd: process.cwd()
+    cwd: process.cwd(),
+    env: process.env,
   })`claude --verbose -p ${prompt} --allowedTools Bash,Edit,Write`;
   return claudeResult.stdout;
 }
