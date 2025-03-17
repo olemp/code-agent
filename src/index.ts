@@ -77,6 +77,7 @@ async function run(): Promise<void> {
     
     // Determine event type
     const event = getEventType(eventPayload);
+    console.log(event);
     if (!event) {
       core.info('Unsupported event type');
       return;
