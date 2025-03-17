@@ -144,10 +144,10 @@ function envSetting(apiKey: string): void {
 
 // Function to determine event type
 function getEventType(payload: any): AgentEvent | null {
-  if (payload.action === 'opened' && payload.issue.pull_request === null) {
+  if (payload.action === 'opened' && !payload.issue.pull_request) {
     return { type: 'issuesOpened', github: payload };
   }
-  if (payload.action === 'created' && payload.issue.pull_request === null) {
+  if (payload.action === 'created' && !payload.issue.pull_request) {
     return { type: 'issueCommentCreated', github: payload };
   }
   if (payload.action === 'created' && payload.issue.pull_request) {
