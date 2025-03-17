@@ -64,8 +64,6 @@ async function run(): Promise<void> {
       core.setFailed('Anthropic API Key is required');
       return;
     }
-
-    envSetting(anthropicApiKey);
     
     // Initialize GitHub Client
     const octokit = github.getOctokit(githubToken);
@@ -136,10 +134,6 @@ async function run(): Promise<void> {
       core.setFailed('An unknown error occurred');
     }
   }
-}
-
-function envSetting(apiKey: string): void {
-  process.env.ANTHROPIC_API_KEY = apiKey
 }
 
 // Function to determine event type
@@ -312,7 +306,6 @@ function runClaudeCode(prompt: string, timeout: number): string {
     preferLocal: true,
     timeout: timeout, // ms,
     cwd: process.cwd(),
-    env: process.env,
   })`claude --verbose -p ${prompt} --allowedTools Bash,Edit,Write`;
   return claudeResult.stdout;
 }
