@@ -98,7 +98,7 @@ async function run(): Promise<void> {
     // Execute Claude CLI
     core.info(`Executing Claude CLI: ${prompt}`);
     const originalFileState = captureFileState();
-    const claudeOutput = runClaudeCode(prompt, timeoutSecond * 1000);
+    const claudeOutput = runClaudeCode(anthropicApiKey, prompt, timeoutSecond * 1000);
 
     // `Credit balance is too low` error handling
     if (claudeOutput.includes('Credit balance is too low')) {
@@ -300,13 +300,13 @@ async function postComment(
 }
 
 
-function runClaudeCode(prompt: string, timeout: number): string {
+function runClaudeCode(apiKey: string, prompt: string, timeout: number): string {
   // Execute claude command
   const claudeResult = execaSync({
     preferLocal: true,
     timeout: timeout, // ms,
     cwd: process.cwd(),
-  })`claude --verbose -p ${prompt} --allowedTools Bash,Edit,Write`;
+  })`ANTHROPIC_API_KEY=${apiKey} claude --verbose -p ${prompt} --allowedTools Bash,Edit,Write`;
   return claudeResult.stdout;
 }
 
