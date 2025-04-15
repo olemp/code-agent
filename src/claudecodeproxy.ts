@@ -7,7 +7,7 @@ import { ActionConfig } from './config.js';
  * @param workspace The directory to run the command in (optional, defaults to current dir if not needed).
  */
 export async function startClaudeCodeProxyServer(config: ActionConfig): Promise<void> {
-    const command = 'uv';
+    const command = '/root/.local/bin/uv';
     const args = ['run', 'uvicorn', 'server:app', '--host', '0.0.0.0', '--port', config.claudeCodePort.toString()];
 
     // Set up environment variables
