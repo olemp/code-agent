@@ -57,10 +57,13 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 # Install Claude Code
 RUN npm install -g @anthropic-ai/claude-code
 
-# Install Claude Code Proxy & UV
+# Install Claude Code Proxy
 RUN mkdir -p /claude-code-proxy && \
   git clone https://github.com/1rgs/claude-code-proxy.git /claude-code-proxy && \
-  curl -LsSf https://astral.sh/uv/install.sh | sh
+  curl -LsSf https://astral.sh/uv/install.sh | sh && \
+  cd /claude-code-proxy && \
+  /root/.local/bin/uv venv && \
+  /root/.local/bin/uv pip install -r pyproject.toml
 
 RUN rm -rf /workspace/*
 

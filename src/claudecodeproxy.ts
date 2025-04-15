@@ -24,10 +24,15 @@ export async function startClaudeCodeProxyServer(config: ActionConfig): Promise<
     try {
         // Run the server command asynchronously.
         // We pipe stdio so that server logs appear in the action's logs.
-        await execa(command, args, {
+        const child = execa(command, args, {
             cwd: config.claudeCodeProxyCwd,
             env: envVars,
             stdio: 'inherit',
+        });
+
+        child.catch((error) => {
+            core.error(`Claude Code proxy server exited with error: ${error instanceof Error ? error.stack : String(error)}`);
+            throw error;
         });
     } catch (error) {
         core.error(`Error starting Claude Code proxy server: ${error instanceof Error ? error.stack : String(error)}`);
