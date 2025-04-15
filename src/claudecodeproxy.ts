@@ -14,12 +14,27 @@ export async function startClaudeCodeProxyServer(config: ActionConfig): Promise<
     const envVars: Record<string, string> = {
         ...process.env,
         ANTHROPIC_API_KEY: config.anthropicApiKey,
-        OPENAI_API_KEY: config.proxyOpenaiApiKey,
-        GEMINI_API_KEY: config.proxyGeminiApiKey,
-        PREFERRED_PROVIDER: config.proxyPreferredProvider,
-        BIG_MODEL: config.proxyBigModel,
-        SMALL_MODEL: config.proxySmallModel,
     };
+
+    if (config.proxyOpenaiApiKey) {
+        envVars.OPENAI_API_KEY = config.proxyOpenaiApiKey;
+    }
+
+    if (config.proxyGeminiApiKey) {
+        envVars.GEMINI_API_KEY = config.proxyGeminiApiKey;
+    }
+
+    if (config.proxyPreferredProvider) {
+        envVars.PREFERRED_PROVIDER = config.proxyPreferredProvider;
+    }
+
+    if (config.proxyBigModel) {
+        envVars.BIG_MODEL = config.proxyBigModel;
+    }
+
+    if (config.proxySmallModel) {
+        envVars.SMALL_MODEL = config.proxySmallModel;
+    }
 
     try {
         const child = execa(command, args, {
