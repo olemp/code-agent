@@ -22,12 +22,10 @@ export async function startClaudeCodeProxyServer(config: ActionConfig): Promise<
     };
 
     try {
-        // Run the server command asynchronously.
-        // We pipe stdio so that server logs appear in the action's logs.
         const child = execa(command, args, {
             cwd: config.claudeCodeProxyCwd,
             env: envVars,
-            stdio: 'inherit',
+            stdio: 'ignore',
         });
 
         child.catch((error) => {

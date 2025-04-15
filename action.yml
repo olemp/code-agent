@@ -66,7 +66,6 @@ inputs:
   proxy-preferred-provider:
     description: 'Specify the preferred provider for proxy'
     required: false
-    default: 'openai'
   proxy-big-model:
     description: 'Specify the big model for proxy'
     required: false
