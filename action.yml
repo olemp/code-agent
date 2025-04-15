@@ -64,7 +64,7 @@ inputs:
     description: 'Specify the Gemini API key for proxy'
     required: false
   proxy-preferred-provider:
-    description: 'Specify the preferred provider for proxy'
+    description: 'Specify the preferred provider for proxy(openai or google)'
     required: false
   proxy-big-model:
     description: 'Specify the big model for proxy'
