@@ -42,7 +42,7 @@ export function startClaudeCodeProxyServer(config: ActionConfig): AbortControlle
         const child = execa(command, args, {
             cwd: config.claudeCodeProxyCwd,
             env: envVars,
-            stdio: 'inherit',
+            stdio: 'ignore',
             cancelSignal,
         });
 
