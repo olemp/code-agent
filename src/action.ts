@@ -98,9 +98,10 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
 
   // Check if Claude Code proxy is enabled
+  let proxyAbortController: AbortController | undefined;
   if (config.useClaudeCodeProxy) {
     core.info('Starting Claude Code proxy server...');
-    await startClaudeCodeProxyServer(config);
+    proxyAbortController = startClaudeCodeProxyServer(config);
   }
 
   // Execute Claude CLI
@@ -126,6 +127,11 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   // Handle the results
   await handleResult(config, processedEvent, output, changedFiles);
+
+  // Cancel the proxy server if it was started
+  if (proxyAbortController) {
+    proxyAbortController.abort();
+  }
 
   core.info('Action completed successfully.');
 }
