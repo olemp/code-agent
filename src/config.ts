@@ -3,20 +3,37 @@ import * as github from '@actions/github';
 import { Octokit } from 'octokit';
 
 export interface ActionConfig {
+  // Required
   githubToken: string;
   anthropicApiKey: string;
+  eventPath: string;
+  timeoutSeconds: number;
+
+  // Optional
   anthropicBaseUrl: string;
   anthropicModel: string;
   anthropicSmallFastModel: string;
+
+  // Optional: Use Bedrock
   claudeCodeUseBedrock: string;
   anthropicBedrockBaseUrl: string;
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
   awsRegion: string;
   disablePromptCaching: string;
-  eventPath: string;
+
+  // Optional: Use Claude Code Proxy
+  useClaudeCodeProxy: string;
+  claudeCodeProxyCwd: string;
+  claudeCodePort: number;
+  proxyOpenaiApiKey: string;
+  proxyGeminiApiKey: string;
+  proxyPreferredProvider: string;
+  proxyBigModel: string;
+  proxySmallModel: string;
+
+  // Context and repo information
   workspace: string;
-  timeoutSeconds: number;
   octokit: Octokit;
   context: typeof github.context;
   repo: { owner: string; repo: string };
@@ -28,16 +45,18 @@ export interface ActionConfig {
  * @throws Error if required inputs are missing
  */
 export function getConfig(): ActionConfig {
+  // Required
   const githubToken = core.getInput('github-token', { required: true });
-  const anthropicApiKey = core.getInput('anthropic-api-key', { required: true });
-  const eventPath = core.getInput('event-path');
-  const workspace = '/workspace/app';
+  const anthropicApiKey = core.getInput('anthropic-api-key');
+  const eventPath = core.getInput('event-path', { required: true });
   const timeoutSeconds = core.getInput('timeout') ? parseInt(core.getInput('timeout'), 10) : 300;
   
-  // Additional environment variables (all optional)
-  const anthropicBaseUrl = core.getInput('anthropic-base-url') || '';
+  // Optional
+  let anthropicBaseUrl = core.getInput('anthropic-base-url') || '';
   const anthropicModel = core.getInput('anthropic-model') || '';
   const anthropicSmallFastModel = core.getInput('anthropic-small-fast-model') || '';
+  
+  // Optional: Use Bedrock
   const claudeCodeUseBedrock = core.getInput('claude-code-use-bedrock') || '';
   const anthropicBedrockBaseUrl = core.getInput('anthropic-bedrock-base-url') || '';
   const awsAccessKeyId = core.getInput('aws-access-key-id') || '';
@@ -45,7 +64,17 @@ export function getConfig(): ActionConfig {
   const awsRegion = core.getInput('aws-region') || '';
   const disablePromptCaching = core.getInput('disable-prompt-caching') || '';
 
-  if (!anthropicApiKey) {
+  // Optional: Use Claude Code Proxy
+  const useClaudeCodeProxy = core.getInput('use-claude-code-proxy') || '';
+  const claudeCodeProxyCwd = '/claude-code-proxy';
+  const claudeCodePort = 8082;
+  const proxyOpenaiApiKey = core.getInput('proxy-openai-api-key') || '';
+  const proxyGeminiApiKey = core.getInput('proxy-gemini-api-key') || '';
+  const proxyPreferredProvider = core.getInput('proxy-preferred-provider') || '';
+  const proxyBigModel = core.getInput('proxy-big-model') || '';
+  const proxySmallModel = core.getInput('proxy-small-model') || '';
+
+  if (!anthropicApiKey && !useClaudeCodeProxy) {
     throw new Error('Anthropic API Key is required.');
   }
   if (!githubToken) {
@@ -54,10 +83,12 @@ export function getConfig(): ActionConfig {
   if (!eventPath) {
     throw new Error('GitHub event path is missing.');
   }
-  if (!workspace) {
-    throw new Error('GitHub workspace path is missing.');
-  }
 
+  // use proxy overwrites base url
+  anthropicBaseUrl = useClaudeCodeProxy ? 'http://localhost:' + claudeCodePort : anthropicBaseUrl;
+
+  // Context and repo information
+  const workspace = '/workspace/app';
   const octokit = new Octokit({ auth: githubToken });
   const context = github.context;
   const repo = context.repo;
@@ -65,6 +96,8 @@ export function getConfig(): ActionConfig {
   return {
     githubToken,
     anthropicApiKey,
+    eventPath,
+    timeoutSeconds,
     anthropicBaseUrl,
     anthropicModel,
     anthropicSmallFastModel,
@@ -74,11 +107,18 @@ export function getConfig(): ActionConfig {
     awsSecretAccessKey,
     awsRegion,
     disablePromptCaching,
-    eventPath,
+    useClaudeCodeProxy,
+    claudeCodeProxyCwd,
+    claudeCodePort,
+    proxyOpenaiApiKey,
+    proxyGeminiApiKey,
+    proxyPreferredProvider,
+    proxyBigModel,
+    proxySmallModel,
+
     workspace,
-    timeoutSeconds,
     octokit,
     context,
-    repo,
+    repo
   };
 }

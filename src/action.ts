@@ -13,6 +13,7 @@ import { captureFileState, detectChanges } from './file.js';
 import { ActionConfig } from './config.js';
 import { ProcessedEvent } from './event.js';
 import { maskSensitiveInfo } from './permission.js';
+import { startClaudeCodeProxyServer } from './claudecodeproxy.js';
 
 /**
  * Handles the result of execution.
@@ -95,6 +96,12 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   // generate Propmt
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
+
+  // Check if Claude Code proxy is enabled
+  if (config.useClaudeCodeProxy) {
+    core.info('Starting Claude Code proxy server...');
+    await startClaudeCodeProxyServer(config);
+  }
 
   // Execute Claude CLI
   core.info('Executing Claude Code CLI...');

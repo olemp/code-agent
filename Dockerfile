@@ -54,24 +54,24 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-# Install Claude
+# Install Claude Code
 RUN npm install -g @anthropic-ai/claude-code
+
+# Install Claude Code Proxy & UV
+RUN mkdir -p /claude-code-proxy && \
+  git clone https://github.com/1rgs/claude-code-proxy.git /claude-code-proxy && \
+  curl -LsSf https://astral.sh/uv/install.sh | sh
 
 RUN rm -rf /workspace/*
 
-# アプリケーションディレクトリを作成
 WORKDIR /app
 
-# package.jsonとpackage-lock.jsonをコピー
 COPY package*.json ./
 
-# 依存パッケージをインストール
 RUN npm ci
 
-# ソースコードをコピー
 COPY . .
 
 RUN npm run build
 
-# エントリポイントの設定
 ENTRYPOINT ["node", "/app/dist/index.js"]
