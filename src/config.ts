@@ -47,7 +47,7 @@ export interface ActionConfig {
 export function getConfig(): ActionConfig {
   // Required
   const githubToken = core.getInput('github-token', { required: true });
-  const anthropicApiKey = core.getInput('anthropic-api-key');
+  let anthropicApiKey = core.getInput('anthropic-api-key');
   const eventPath = core.getInput('event-path', { required: true });
   const timeoutSeconds = core.getInput('timeout') ? parseInt(core.getInput('timeout'), 10) : 300;
   
@@ -85,7 +85,10 @@ export function getConfig(): ActionConfig {
   }
 
   // use proxy overwrites base url
-  anthropicBaseUrl = useClaudeCodeProxy ? 'http://localhost:' + claudeCodePort : anthropicBaseUrl;
+  if (useClaudeCodeProxy) {
+    anthropicApiKey = 'dummy';
+    anthropicBaseUrl = 'http://localhost:' + claudeCodePort;
+  }
 
   // Context and repo information
   const workspace = '/workspace/app';
