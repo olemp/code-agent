@@ -103,15 +103,13 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   core.info(`Prompt: \n${prompt}`);
   let output;
   try {
-    let rawOutput: string; // Explicitly type rawOutput as string
+    let rawOutput: string;
     if (processedEvent.type === 'codex') {
-      // Add await here
       rawOutput = await runCodex(workspace, config, prompt, timeoutSeconds * 1000); 
     } else {
-      // Add await here too for consistency and potential async nature
-      rawOutput = runClaudeCode(workspace, config, prompt, timeoutSeconds * 1000); 
+      rawOutput = await runClaudeCode(workspace, config, prompt, timeoutSeconds * 1000); 
     }
-    // No change needed here as rawOutput will be a string after await
+
     output = maskSensitiveInfo(rawOutput, config); 
   } catch (error) {
     await postComment(

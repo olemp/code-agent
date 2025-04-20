@@ -1,4 +1,4 @@
-import { execa } from 'execa'; // Changed from execaSync
+import { execa } from 'execa';
 import * as core from '@actions/core';
 import { ActionConfig } from '../config/config.js';
 
@@ -8,9 +8,9 @@ import { ActionConfig } from '../config/config.js';
  * @param config The ActionConfig object containing API keys and configuration.
  * @param prompt The user prompt
  * @param timeout Timeout in milliseconds.
- * @returns A promise resolving to the stdout from the Codex CLI. // Changed return type description
+ * @returns A promise resolving to the stdout from the Codex CLI.
  */
-export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<string> { // Added async and Promise<>
+export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<string> {
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
     prompt = prompt.replace(/"/g, '\\"');
@@ -28,9 +28,9 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
     }
 
     core.info(`Run command: codex ${cliArgs.join(' ')}`);
-    // Changed execaSync to await execa
+
     const result = await execa(
-      'codex', // Assuming 'codex' is in the PATH
+      'codex',
       cliArgs,
       {
         timeout: timeout,
