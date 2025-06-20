@@ -14,7 +14,12 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
     prompt = prompt.replace(/"/g, '\\"');
-    const cliArgs = ['--full-auto', '--dangerously-auto-approve-everything', '--quiet', '"' + prompt + '"'];
+    const cliArgs = [
+      '--full-auto',
+      '--dangerously-auto-approve-everything',
+      '--quiet',
+      prompt
+    ]
 
     // Set up environment variables
     const envVars: Record<string, string> = {
@@ -27,7 +32,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       envVars.OPENAI_API_BASE_URL = config.openaiBaseUrl;
     }
 
-    core.info(`Run command: codex ${cliArgs.join(' ')}`);
+    core.info(`Run command: codex ${cliArgs.map(a => a.length > 30 ? a.substring(0, 30) + '...' : a).join(' ')}`);
     // Changed execaSync to await execa
     const result = await execa(
       'codex', // Assuming 'codex' is in the PATH
