@@ -3,7 +3,6 @@ FROM node:22
 ARG TZ
 ENV TZ="$TZ"
 
-# Install basic development tools and iptables/ipset
 RUN apt update && apt install -y less \
   git \
   procps \
@@ -23,12 +22,10 @@ RUN apt update && apt install -y less \
 
 RUN mkdir -p /usr/local/share/npm-global
 
-# Persist bash history.
 RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   && mkdir /commandhistory \
   && touch /commandhistory/.bash_history
 
-# Create workspace and config directories and set permissions
 RUN mkdir -p /workspace /github/home/.claude
 
 WORKDIR /workspace
@@ -38,14 +35,11 @@ RUN ARCH=$(dpkg --print-architecture) && \
   sudo dpkg -i "git-delta_0.18.2_${ARCH}.deb" && \
   rm "git-delta_0.18.2_${ARCH}.deb"
 
-# Install global packages
 ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
 ENV PATH=$PATH:/usr/local/share/npm-global/bin
 
-# Set the default shell to bash rather than sh
 ENV SHELL /bin/zsh
 
-# Default powerline10k theme
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.0/zsh-in-docker.sh)" -- \
   -p git \
   -p fzf \
@@ -54,24 +48,18 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-# Install Claude Code and Codex
 RUN npm install -g @anthropic-ai/claude-code @openai/codex
 
 RUN rm -rf /workspace/*
 
-# アプリケーションディレクトリを作成
 WORKDIR /app
 
-# package.jsonとpackage-lock.jsonをコピー
 COPY package*.json ./
 
-# 依存パッケージをインストール
 RUN npm ci
 
-# ソースコードをコピー
 COPY . .
 
 RUN npm run build
 
-# エントリポイントの設定
 ENTRYPOINT ["node", "/app/dist/index.js"]

@@ -1,1 +1,1 @@
-FROM ghcr.io/potproject/code-agent:latest
+FROM ghcr.io/olemp/code-agent:latest
