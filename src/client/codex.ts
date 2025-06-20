@@ -1,6 +1,7 @@
 import { execa } from 'execa'; // Changed from execaSync
 import * as core from '@actions/core';
 import { ActionConfig } from '../config/config.js';
+import { limit } from '../utils/limit.js';
 
 /**
  * Executes the Codex CLI command.
@@ -31,7 +32,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       envVars.OPENAI_API_BASE_URL = config.openaiBaseUrl;
     }
 
-    core.info(`Run command: codex ${cliArgs.map(a => a.length > 30 ? a.substring(0, 30) + '...' : a).join(' ')}`);
+    core.info(`Run command: codex ${cliArgs.map(a => limit(a, 50)).join(' ')}`);
     // Changed execaSync to await execa
     const result = await execa(
       'codex', // Assuming 'codex' is in the PATH
