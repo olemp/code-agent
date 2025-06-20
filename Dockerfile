@@ -48,7 +48,7 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-RUN npm install -g @anthropic-ai/claude-code @openai/codex
+RUN npm install -g @anthropic-ai/claude-code @openai/codex yarn
 
 RUN rm -rf /workspace/*
 
@@ -56,7 +56,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
