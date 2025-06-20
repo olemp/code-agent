@@ -6,6 +6,7 @@ An AI Agent that operates [Claude Code](https://github.com/anthropics/claude-cod
 
 - Start Claude Code with the `/claude` command from GitHub Issues or PR comments
 - Start Codex with the `/codex` command from GitHub Issues or PR comments
+- Trigger AI agents via GitHub labels (e.g., `claude`, `codex`, or custom labels)
 - Automatically create a Pull Request or commit changes if the AI modifies code
 - Post AI output as a comment if there are no changes
 
@@ -52,6 +53,8 @@ jobs:
       - uses: potproject/code-agent@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Labels that will trigger the bot (e.g. 'claude,codex,needs-review')
+          trigger-labels: 'claude,codex'
 
           # [Claude Code Settings]
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -107,12 +110,23 @@ Comment on an existing Pull Request to request code modifications:
 
 Claude Code or Codex will analyze the request and create a new Pull Request with the code changes. The AI will also post a comment with the generated code.
 
+### Triggering with Labels
+
+You can also trigger the AI agents by adding labels to issues or PRs:
+
+1. Add the `claude` label to trigger Claude Code
+2. Add the `codex` label to trigger Codex
+3. Add any custom label configured in your workflow
+
+When triggered by a label without explicit instructions, the AI will use the issue or PR title and description as the prompt.
+
 ## Inputs Settings
 ### Basic Configuration
 
 | Input Name | Description |
 |------------|-------------|
 | `github-token` | **Required** GitHub token for authentication |
+| `trigger-labels` | Comma-separated list of labels that can trigger the AI agents (default: empty) |
 | `event-path` | Path to the event file (default: `${{ github.event_path }}`) |
 | `timeout` | Timeout for AI processing in seconds (default: 600) |
 

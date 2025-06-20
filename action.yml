@@ -9,6 +9,9 @@ inputs:
   github-token:
     description: 'Specify the GitHub Token'
     required: true
+  trigger-labels:
+    description: 'Comma-separated list of labels that can trigger the AI agents'
+    required: false
   event-path:
     description: 'Specify the path to the GitHub Event JSON file'
     default: ${{ github.event_path }}

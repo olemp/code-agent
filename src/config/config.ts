@@ -3,7 +3,9 @@ import * as github from '@actions/github';
 import { Octokit } from 'octokit';
 
 export interface ActionConfig {
-triggerLabels: string,
+  // Trigger settings
+  triggerLabels: string[];
+  triggerType: 'claude' | 'codex' | null;
 
   // Common settings
   githubToken: string;
@@ -39,7 +41,10 @@ triggerLabels: string,
  * @throws Error if required inputs are missing
  */
 export function getConfig(): ActionConfig {
-  const triggerLabels = core.getInput('trigger-labels', { required: true });
+  const triggerLabelsInput = core.getInput('trigger-labels') || '';
+  
+  // Parse trigger labels from comma-separated string into array
+  const triggerLabels = triggerLabelsInput.split(',').map(label => label.trim()).filter(Boolean);
   const githubToken = core.getInput('github-token', { required: true });
   const eventPath = core.getInput('event-path');
   const workspace = '/workspace/app';
@@ -81,6 +86,7 @@ export function getConfig(): ActionConfig {
 
   return {
     triggerLabels,
+    triggerType: null, // Will be set during event processing
 
     githubToken,
     eventPath,
