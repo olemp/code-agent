@@ -81,11 +81,12 @@ async function handleResult(
 
 /**
  * Executes the main logic of the GitHub Action.
+ * 
  * @param config Action configuration.
  * @param processedEvent Processed event data.
  */
 export async function runAction(config: ActionConfig, processedEvent: ProcessedEvent): Promise<void> {
-  const { octokit, repo, workspace, githubToken, context, anthropicApiKey, timeoutSeconds } = config;
+  const { octokit, repo, workspace, githubToken, context, timeoutSeconds } = config;
   const { agentEvent, userPrompt } = processedEvent;
 
   // Add eyes reaction

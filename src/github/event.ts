@@ -3,6 +3,9 @@ import * as fs from 'fs';
 import { AgentEvent, getEventType, extractText } from './github.js';
 import { ActionConfig } from '../config/config.js';
 
+// Configuration option for auto-processing new issues
+const DEFAULT_AUTO_PROCESS_ISSUES = true;
+
 export interface ProcessedEvent {
   type: "claude" | "codex";
   agentEvent: AgentEvent;
@@ -65,6 +68,9 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
   let userPrompt = "";
   let type: "claude" | "codex" | null = null;
   
+  // Auto-process new issues if enabled (true by default unless explicitly disabled)
+  const autoProcessIssues = config.autoProcessIssues !== undefined ? config.autoProcessIssues : DEFAULT_AUTO_PROCESS_ISSUES;
+  
   // Check for /claude and /codex commands in text
   const text = extractText(agentEvent.github);
   if (text) {
@@ -121,6 +127,23 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
     }
   }
 
+  // Auto-process new issues that were just opened
+  if (!type && autoProcessIssues && agentEvent.type === 'issuesOpened') {
+    core.info('Auto-processing newly opened issue...');
+    
+    // Format the issue content as a prompt
+    if (eventPayload.issue?.title) {
+      userPrompt = `${eventPayload.issue.title}\n\n`;
+      if (eventPayload.issue.body) {
+        userPrompt += eventPayload.issue.body;
+      }
+      
+      // Use default model type from config or fallback to claude
+      type = config.defaultModelType || 'claude';
+      core.info(`Using ${type} for auto-processed issue`);
+    }
+  }
+  
   // If no trigger type was detected, exit gracefully
   if (!type) {
     core.info('No trigger command or configured label found.');

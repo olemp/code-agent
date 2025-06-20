@@ -6,6 +6,10 @@ export interface ActionConfig {
   // Trigger settings
   triggerLabels: string[];
   triggerType: 'claude' | 'codex' | null;
+  
+  // Auto-processing settings
+  autoProcessIssues?: boolean;
+  defaultModelType?: 'claude' | 'codex';
 
   // Common settings
   githubToken: string;
@@ -42,6 +46,11 @@ export interface ActionConfig {
  */
 export function getConfig(): ActionConfig {
   const triggerLabelsInput = core.getInput('trigger-labels') || '';
+  
+  // Parse auto-processing settings
+  const autoProcessIssuesInput = core.getInput('auto-process-issues') || 'true';
+  const autoProcessIssues = autoProcessIssuesInput.toLowerCase() === 'true';
+  const defaultModelType = (core.getInput('default-model-type') || 'claude') as 'claude' | 'codex';
   
   // Parse trigger labels from comma-separated string into array
   const triggerLabels = triggerLabelsInput.split(',').map(label => label.trim()).filter(Boolean);
@@ -87,6 +96,10 @@ export function getConfig(): ActionConfig {
   return {
     triggerLabels,
     triggerType: null, // Will be set during event processing
+    
+    // Auto-processing settings
+    autoProcessIssues,
+    defaultModelType,
 
     githubToken,
     eventPath,
