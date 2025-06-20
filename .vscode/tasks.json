@@ -1,0 +1,22 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "command": "docker buildx build --platform linux/amd64 -t ghcr.io/olemp/code-agent:latest .",
+            "detail": "",
+            "label": "Docker: Build"
+        },
+        {
+            "type": "shell",
+            "command": "docker tag code-agent:latest ghcr.io/olemp/code-agent:latest",
+            "detail": "",
+            "label": "Docker: Tag"
+        },
+        {
+            "type": "shell",
+            "command": "docker push ghcr.io/olemp/code-agent:latest",
+            "detail": "",
+            "label": "Docker: Push"
+        }
+    ]
+}
