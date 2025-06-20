@@ -3,6 +3,8 @@ import * as github from '@actions/github';
 import { Octokit } from 'octokit';
 
 export interface ActionConfig {
+triggerLabels: string,
+
   // Common settings
   githubToken: string;
   eventPath: string;
@@ -37,6 +39,7 @@ export interface ActionConfig {
  * @throws Error if required inputs are missing
  */
 export function getConfig(): ActionConfig {
+  const triggerLabels = core.getInput('trigger-labels', { required: true });
   const githubToken = core.getInput('github-token', { required: true });
   const eventPath = core.getInput('event-path');
   const workspace = '/workspace/app';
@@ -77,6 +80,8 @@ export function getConfig(): ActionConfig {
   }
 
   return {
+    triggerLabels,
+
     githubToken,
     eventPath,
     workspace,
