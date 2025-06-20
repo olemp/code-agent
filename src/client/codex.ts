@@ -13,7 +13,6 @@ import { ActionConfig } from '../config/config.js';
 export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<string> { // Added async and Promise<>
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
-    prompt = prompt.replace(/"/g, '\\"');
     const cliArgs = [
       '--full-auto',
       '--dangerously-auto-approve-everything',
