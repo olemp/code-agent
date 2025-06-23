@@ -1,7 +1,7 @@
 import { execa } from 'execa'; // Changed from execaSync
 import * as core from '@actions/core';
 import { ActionConfig } from '../config/config.js';
-import { limit } from '../utils/limit.js';
+import { truncate } from '../utils/truncate.js';
 import { ICodexResult } from './types.js';
 import _ from 'lodash';
 
@@ -36,7 +36,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       envVars.OPENAI_API_BASE_URL = config.openaiBaseUrl;
     }
 
-    core.info(`Run command: codex ${cliArgs.map(a => limit(a, 50)).join(' ')}`);
+    core.info(`Run command: codex ${cliArgs.map(a => truncate(a, 50)).join(' ')}`);
     const result = await execa(
       'codex',
       cliArgs,

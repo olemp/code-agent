@@ -6,10 +6,8 @@ import { RepoContext, GitHubEventIssuesOpened, GitHubEventIssueCommentCreated } 
 import { truncateOutput } from './truncateOutput.js';
 
 /**
- * Creates a Pull Request with the changes.
+ * Creates a pull request with the changes.
  */
-
-
 export async function createPullRequest(
   workspace: string,
   octokit: Octokit,
@@ -47,7 +45,7 @@ export async function createPullRequest(
     core.info(`Pushing changes to origin/${branchName}...`);
     execaSync('git', ['push', 'origin', branchName, '--force'], { cwd: workspace, stdio: 'inherit' }); // Use force push for simplicity in case branch exists
 
-    core.info('Creating Pull Request...');
+    core.info('Creating pull request...');
     const pr = await octokit.rest.pulls.create({
       ...repo,
       title: `${commitMessage}`,
@@ -57,17 +55,17 @@ export async function createPullRequest(
       maintainer_can_modify: true,
     });
 
-    core.info(`Pull Request created: ${pr.data.html_url}`);
+    core.info(`Pull request created at ${pr.data.html_url}`);
 
     // Optionally, post a comment linking to the PR in the original issue
     await octokit.rest.issues.createComment({
       ...repo,
       issue_number: issueNumber,
-      body: `Created Pull Request #${pr.data.number} that closes this issue on merge.`,
+      body: `Created pull request #${pr.data.number} that closes this issue on merge.`,
     });
 
   } catch (error) {
-    core.error(`Error creating Pull Request: ${error}`);
-    throw new Error(`Failed to create Pull Request: ${error instanceof Error ? error.message : error}`);
+    core.error(`Error creating pull request: ${error}`);
+    throw new Error(`Failed to create pull request: ${error instanceof Error ? error.message : error}`);
   }
 }
