@@ -4,12 +4,13 @@ import { globSync } from 'glob';
 import ignore from 'ignore';
 import * as path from 'path';
 import { calculateFileHash } from './calculateFileHash.js';
-import { ActionConfig } from '../config/config.js';
 
-interface IFileCaptureOptions extends Pick<ActionConfig, 'excludePatterns' | 'includePatterns'> {
+interface IFileCaptureOptions  {
   maxFileSizeBytes?: number;
   excludeFileTypes?: string[];
   prioritizePatterns?: string[];
+  excludePatterns?: string[] | null;
+  includePatterns?: string[] | null;
 }
 
 const DEFAULT_MAX_FILE_SIZE = 1024 * 1024; // 1MB default size limit
