@@ -10,7 +10,7 @@ import { captureFileState } from './captureFileState.js';
 
 export function detectChanges(workspace: string, originalState: Map<string, string>): string[] {
   core.info('Detecting file changes by comparing states...');
-  const currentState = captureFileState(workspace); // Recapture the current state
+  const currentState = captureFileState(workspace, {}); // Recapture the current state
   const changedFiles = new Set<string>();
 
   // Check for changed or added files by iterating through the current state
