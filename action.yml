@@ -1,6 +1,6 @@
 name: 'Github Code Agent'
-description: 'AI Agent that operates Claude Code on GitHub'
-author: 'potproject'
+description: 'AI Agent that operates Codex or Claude Code on GitHub issues'
+author: 'olemp'
 branding:
   icon: 'code'
   color: 'purple'
@@ -57,6 +57,13 @@ inputs:
     required: false
   openai-base-url:
     description: 'Specify the OpenAI API base URL'
+    required: false
+
+  exclude-patterns:
+    description: 'Comma-separated list of patterns to exclude'
+    required: false
+  include-patterns:
+    description: 'Comma-separated list of patterns to include'
     required: false
 
 runs:
