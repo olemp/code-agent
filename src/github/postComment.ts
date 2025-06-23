@@ -6,8 +6,6 @@ import { GitHubEvent, RepoContext } from './types.js';
 /**
  * Posts a comment to the issue or PR with retry mechanism for transient errors.
  */
-
-
 export async function postComment(
   octokit: Octokit,
   repo: RepoContext,
