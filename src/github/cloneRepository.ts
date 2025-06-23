@@ -41,7 +41,7 @@ export async function cloneRepository(
     if (!branchToClone) {
       throw new Error('Default branch not found');
     }
-    core.info(`Cloning default branch: ${branchToClone}`);
+    core.info(`Cloning default branch ${branchToClone}`);
   }
 
   // Clone the repository

@@ -42,20 +42,17 @@ export function captureFileState(
   const gitignorePath = path.join(workspace, '.gitignore');
   const ig = ignore();
 
-  // Apply default and custom ignores
   ig.add('.git/**');
   ig.add('node_modules/**');
   ig.add('**/dist/**');
   ig.add('**/build/**');
   ig.add('**/.cache/**');
 
-  // Add user-provided exclude patterns
   if (options.excludePatterns?.length) {
     options.excludePatterns.forEach(pattern => ig.add(pattern));
     core.info(`Added ${options.excludePatterns.length} custom exclude patterns`);
   }
 
-  // Process .gitignore if it exists
   if (fs.existsSync(gitignorePath)) {
     core.info(`Reading .gitignore rules from ${gitignorePath}`);
     try {
@@ -66,16 +63,13 @@ export function captureFileState(
     }
   }
 
-  // Set up glob patterns - start with default pattern
   let globPatterns = ['**/*'];
 
-  // If include patterns are specified, use those instead
   if (options.includePatterns?.length) {
     globPatterns = options.includePatterns;
     core.info(`Using custom include patterns: ${options.includePatterns.join(', ')}`);
   }
 
-  // Find all candidate files based on glob patterns
   const allFiles: string[] = [];
   
   for (const pattern of globPatterns) {
@@ -84,21 +78,18 @@ export function captureFileState(
       nodir: true,
       dot: true,
       absolute: false,
-      ignore: ['.git/**'], // Always ignore .git for performance
+      ignore: ['.git/**'],
     });
     allFiles.push(...matches);
   }
 
-  // Apply ignore rules and initial filtering
   let filesToProcess = ig.filter(allFiles);
 
-  // Get file types to exclude (combine defaults with user options)
   const excludeFileTypes = [
     ...DEFAULT_EXCLUDED_FILE_TYPES,
     ...(options.excludeFileTypes || [])
   ];
 
-  // Apply file type filtering
   if (excludeFileTypes.length) {
     filesToProcess = filesToProcess.filter(filePath => {
       const ext = path.extname(filePath).toLowerCase();
@@ -108,7 +99,6 @@ export function captureFileState(
 
   const maxFileSizeBytes = options.maxFileSizeBytes || DEFAULT_MAX_FILE_SIZE;
 
-  // Prioritize specific files if patterns are provided
   const priorityFiles: string[] = [];
   const regularFiles: string[] = [];
 

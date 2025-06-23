@@ -20,7 +20,7 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
     core.info('Unsupported event type or payload structure.');
     return null; // Exit gracefully for unsupported events
   }
-  core.info(`Detected event type: ${agentEvent.type}`);
+  core.info(`Detected event type ${agentEvent.type}`);
 
   let userPrompt = "";
   let type: "claude" | "codex" | null = null;

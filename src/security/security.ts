@@ -38,17 +38,13 @@ async function checkUserPermissionGithub(
   username: string
 ): Promise<boolean> {
   try {
-    // Check user's permissions as a repository collaborator
     const { data: collaboratorPermission } = await octokit.rest.repos.getCollaboratorPermissionLevel({
       ...repo,
       username,
     });
 
     const permission = collaboratorPermission.permission;
-    core.info(`User Permission level: ${permission}`);
 
-    // Determine based on permission level
-    // Permission levels include `admin, write, read, none`
     return ['admin', 'write'].includes(permission);
   } catch (error) {
     core.warning(`Error checking user permission: ${error}`);

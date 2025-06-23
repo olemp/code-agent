@@ -15,6 +15,7 @@ import { postComment } from './postComment.js';
 
 /**
  * Executes the main logic of the GitHub Action.
+ * 
  * @param config Action configuration.
  * @param processedEvent Processed event data.
  */
@@ -65,7 +66,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
     return;
   }
 
-  const changedFiles = detectChanges(workspace, originalFileState);
+  const changedFiles = detectChanges(workspace, originalFileState, config);
 
   await handleResult(config, processedEvent, output, changedFiles);
 }
