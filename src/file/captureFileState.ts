@@ -9,8 +9,9 @@ import { calculateFileHash } from './calculateFileHash.js';
  * Captures the state (path and hash) of files in the workspace, respecting .gitignore.
  * @param workspace The root directory of the workspace.
  * @returns A Map where keys are relative file paths and values are their SHA-256 hashes.
+ * 
+ * TODO: #8
  */
-
 export function captureFileState(workspace: string): Map<string, string> {
   core.info('Capturing current file state (respecting .gitignore)...');
   const fileState = new Map<string, string>();
