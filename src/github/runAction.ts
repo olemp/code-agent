@@ -42,6 +42,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
     if (processedEvent.type === 'codex') {
       // Handle the new ICodexResult type
       const codexResult = await runCodex(workspace, config, prompt, timeoutSeconds * 1000);
+      core.info(`Codex Result: \n${JSON.stringify(codexResult)}`);
       rawOutput = codexResult.text; // Extract just the text property
     } else {
       // Add await here too for consistency and potential async nature

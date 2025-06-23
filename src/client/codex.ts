@@ -3,6 +3,7 @@ import * as core from '@actions/core';
 import { ActionConfig } from '../config/config.js';
 import { limit } from '../utils/limit.js';
 import { ICodexResult } from './types.js';
+import _ from 'lodash';
 
 /**
  * Executes the Codex CLI command.
@@ -12,7 +13,7 @@ import { ICodexResult } from './types.js';
  * @param timeout Timeout in milliseconds.
  * @returns A promise resolving to a CodexResult object containing the response text and token usage metrics.
  */
-export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<ICodexResult> { // Updated return type to ICodexResult
+export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<{ text: string, [key: string]: any }> { // Updated return type to ICodexResult
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = [
@@ -35,6 +36,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
 
     core.info(`Run command: codex ${cliArgs.map(a => limit(a, 50)).join(' ')}`);
     // Changed execaSync to await execa
+    // TODO: #6
     const result = await execa(
       'codex', // Assuming 'codex' is in the PATH
       cliArgs,
@@ -68,42 +70,15 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
 
     core.info('Codex command executed successfully.');
 
-    // Parse stdout
-    const lines = result.stdout.split('\n');
-    const lastLine = lines[lines.length - 1];
+    // stdout parse
+    const codeResult = `\`\`\`\n${result.stdout}\n\`\`\``;
 
-    // Initialize the result object
-    const codexResult: ICodexResult = { text: '' };
-    
-    try {
-      // Parse the JSON response
-      const jsonResult = JSON.parse(lastLine);
-      
-      // Extract the text response
-      if (jsonResult && jsonResult.type === 'message' && jsonResult.content && jsonResult.content.length > 0) {
-        codexResult.text = jsonResult.content[0].text + '\n\n';
-      }
-      
-      // Extract token usage if available
-      if (jsonResult.usage) {
-        codexResult.tokenUsage = {
-          total: jsonResult.usage?.total_tokens,
-          prompt: jsonResult.usage?.prompt_tokens,
-          completion: jsonResult.usage?.completion_tokens
-        };
-        
-        // Log token usage for monitoring
-        core.info(`Token usage - Total: ${codexResult.tokenUsage.total || 'unknown'}, ` + 
-                 `Prompt: ${codexResult.tokenUsage.prompt || 'unknown'}, ` +
-                 `Completion: ${codexResult.tokenUsage.completion || 'unknown'}`);
-      } else {
-        core.info('No token usage information available in the response');
-      }
-    } catch (parseError) {
-      core.warning(`Failed to parse Codex response: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
+    const lastLine = codeResult.split('\n').slice(-2, -1)[0];
+    const jsonResult = JSON.parse(lastLine);
+    return {
+      text: _.get(jsonResult, 'content[0].text', ''),
+      ...jsonResult
     }
-
-    return codexResult;
 
   } catch (error) {
     // Log the full error for debugging, check for timeout
