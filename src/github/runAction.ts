@@ -40,8 +40,9 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   try {
     let rawOutput: string; // Explicitly type rawOutput as string
     if (processedEvent.type === 'codex') {
-      // Add await here
-      rawOutput = await runCodex(workspace, config, prompt, timeoutSeconds * 1000);
+      // Handle the new ICodexResult type
+      const codexResult = await runCodex(workspace, config, prompt, timeoutSeconds * 1000);
+      rawOutput = codexResult.text; // Extract just the text property
     } else {
       // Add await here too for consistency and potential async nature
       rawOutput = runClaudeCode(workspace, config, prompt, timeoutSeconds * 1000);
