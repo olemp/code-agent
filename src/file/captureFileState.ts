@@ -153,6 +153,11 @@ export function captureFileState(
       core.warning(`Could not process file ${relativeFilePath}: ${error}`);
     }
   }
+
+  if(fileState.size === 0) {
+    core.warning(`No files were captured after optimization.`);
+    return new Map<string, string>();
+  }
   
   core.info(`Captured state of ${fileState.size} files after optimization.`);
   return fileState;

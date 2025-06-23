@@ -37,6 +37,11 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
     includePatterns: config.includePatterns,
   });
 
+  if(originalFileState.size === 0) {
+    await postComment(octokit, repo, agentEvent.github, `No files were captured after optimization. Please check your include/exclude patterns.`);
+    return;
+  }
+
   // generate Propmt
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
 
