@@ -1,9 +1,8 @@
-import { execa } from 'execa'; // Changed from execaSync
 import * as core from '@actions/core';
+import { execa } from 'execa'; // Changed from execaSync
+import _ from 'lodash';
 import { ActionConfig } from '../config/config.js';
 import { truncate } from '../utils/truncate.js';
-import { ICodexResult } from './types.js';
-import _ from 'lodash';
 
 /**
  * Executes the Codex CLI command.
@@ -15,15 +14,16 @@ import _ from 'lodash';
  * 
  * @returns A promise resolving to a CodexResult object containing the response text and token usage metrics.
  */
-export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<{ text: string, [key: string]: any }> { // Updated return type to ICodexResult
+export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<{ text: string, [key: string]: any }> { 
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = [
+      config.openaiModel && `-m ${config.openaiModel}`,
       '--full-auto',
       '--dangerously-auto-approve-everything',
       '--quiet',
       prompt
-    ]
+    ].filter(Boolean)
 
     // Set up environment variables
     const envVars: Record<string, string> = {

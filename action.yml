@@ -58,6 +58,9 @@ inputs:
   openai-base-url:
     description: 'Specify the OpenAI API base URL'
     required: false
+  openai-model:
+    description: 'Specify the OpenAI model to use'
+    required: false
 
   exclude-patterns:
     description: 'Comma-separated list of patterns to exclude'
