@@ -63,7 +63,7 @@ export async function createPullRequest(
     await octokit.rest.issues.createComment({
       ...repo,
       issue_number: issueNumber,
-      body: `Created Pull Request #${pr.data.number}`,
+      body: `Created Pull Request #${pr.data.number} that closes this issue on merge.`,
     });
 
   } catch (error) {
