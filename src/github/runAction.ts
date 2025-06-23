@@ -12,6 +12,7 @@ import { cloneRepository } from './cloneRepository.js';
 import { ProcessedEvent } from './types.js';
 import { generatePrompt } from './generatePrompt.js';
 import { postComment } from './postComment.js';
+import { getActionRunUrl } from './getActionRunUrl.js';
 
 /**
  * Executes the main logic of the GitHub Action.
@@ -27,7 +28,17 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   // Add eyes reaction
   await addEyeReaction(octokit, repo, agentEvent.github);
 
-  await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap.`);
+  // Get the URL for this Action run
+  const actionRunUrl = getActionRunUrl();
+  
+  // Post initial comment, including the Action Run URL if available
+  const initialMessage = `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap.`;
+  
+  const commentWithUrl = actionRunUrl 
+    ? `${initialMessage}\n\n[View Action Run](${actionRunUrl})` 
+    : initialMessage;
+    
+  await postComment(octokit, repo, agentEvent.github, commentWithUrl);
 
   // Clone repository
   await cloneRepository(workspace, githubToken, repo, context, octokit, agentEvent);
