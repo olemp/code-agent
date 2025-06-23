@@ -34,6 +34,7 @@ export interface ActionConfig {
   // Codex
   openaiApiKey: string;
   openaiBaseUrl: string;
+  openaiModel: string;
 
   excludePatterns?: string[] | null;
   includePatterns?: string[] | null;
@@ -71,6 +72,7 @@ export function getConfig(): ActionConfig {
   // Codex / OpenAI
   const openaiApiKey = core.getInput('openai-api-key') || '';
   const openaiBaseUrl = core.getInput('openai-base-url') || '';
+  const openaiModel = core.getInput('openai-model') || '';
 
   const excludePatterns = getStrArray('exclude-patterns');
   const includePatterns = getStrArray('include-patterns');
@@ -113,6 +115,7 @@ export function getConfig(): ActionConfig {
 
     openaiApiKey,
     openaiBaseUrl,
+    openaiModel,
 
     excludePatterns,
     includePatterns,
