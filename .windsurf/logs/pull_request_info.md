@@ -15,4 +15,3 @@
 - Added support for file prioritization patterns
 - Updated call sites to use the new optimized file capture API
 
-The token usage data is extracted from the JSON response if available and includes total tokens, prompt tokens, and completion tokens.

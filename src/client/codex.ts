@@ -7,10 +7,12 @@ import _ from 'lodash';
 
 /**
  * Executes the Codex CLI command.
+ * 
  * @param workspace The directory to run the command in.
  * @param config The ActionConfig object containing API keys and configuration.
  * @param prompt The user prompt
  * @param timeout Timeout in milliseconds.
+ * 
  * @returns A promise resolving to a CodexResult object containing the response text and token usage metrics.
  */
 export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<{ text: string, [key: string]: any }> { // Updated return type to ICodexResult
@@ -35,10 +37,8 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
     }
 
     core.info(`Run command: codex ${cliArgs.map(a => limit(a, 50)).join(' ')}`);
-    // Changed execaSync to await execa
-    // TODO: #6
     const result = await execa(
-      'codex', // Assuming 'codex' is in the PATH
+      'codex',
       cliArgs,
       {
         timeout: timeout,
@@ -77,11 +77,10 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
     const jsonResult = JSON.parse(lastLine);
     return {
       text: _.get(jsonResult, 'content[0].text', ''),
-      ...jsonResult
+      ..._.omit(jsonResult, 'content')
     }
 
   } catch (error) {
-    // Log the full error for debugging, check for timeout
     core.error(`Error executing Codex command: ${error instanceof Error ? error.stack : String(error)}`);
     if (error instanceof Error && 'timedOut' in error && (error as any).timedOut) {
       throw new Error(`Codex command timed out after ${timeout}ms.`);

@@ -38,17 +38,13 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   core.info(`Prompt: \n${limit(prompt, 100)}`);
   let output;
   try {
-    let rawOutput: string; // Explicitly type rawOutput as string
+    let rawOutput: string;
     if (processedEvent.type === 'codex') {
-      // Handle the new ICodexResult type
       const codexResult = await runCodex(workspace, config, prompt, timeoutSeconds * 1000);
-      core.info(`Codex Result: \n${JSON.stringify(codexResult)}`);
-      rawOutput = codexResult.text; // Extract just the text property
+      rawOutput = codexResult.text; 
     } else {
-      // Add await here too for consistency and potential async nature
       rawOutput = runClaudeCode(workspace, config, prompt, timeoutSeconds * 1000);
     }
-    // No change needed here as rawOutput will be a string after await
     output = maskSensitiveInfo(rawOutput, config);
   } catch (error) {
     await postComment(
