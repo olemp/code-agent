@@ -20,11 +20,13 @@ import { postComment } from './postComment.js';
  */
 
 export async function runAction(config: ActionConfig, processedEvent: ProcessedEvent): Promise<void> {
-  const { octokit, repo, workspace, githubToken, context, anthropicApiKey, timeoutSeconds } = config;
+  const { octokit, repo, workspace, githubToken, context, timeoutSeconds } = config;
   const { agentEvent, userPrompt } = processedEvent;
 
   // Add eyes reaction
   await addEyeReaction(octokit, repo, agentEvent.github);
+
+  await postComment(octokit, repo, agentEvent.github, `I'm Beagle the Code Agent, I'll help you solve this issue!`);
 
   // Clone repository
   await cloneRepository(workspace, githubToken, repo, context, octokit, agentEvent);
@@ -35,7 +37,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   // generate Propmt
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
 
-  core.info(`Prompt: \n${limit(prompt, 100)}`);
+  core.info(`Prompt (first 100 characters): \n${limit(prompt, 100)}`);
   let output;
   try {
     let rawOutput: string;
@@ -51,7 +53,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
       octokit,
       repo,
       agentEvent.github,
-      `CLI execution failed: ${error instanceof Error ? error.message : String(error)}`
+      `Hi! I'm Beagle the Code Agent. I'm sorry, I was unable to execute the CLI: ${error instanceof Error ? error.message : String(error)}`
     );
     return;
   }
