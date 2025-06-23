@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Octokit } from 'octokit';
+import { getStrArray } from './getStrArray.js';
 
 export interface ActionConfig {
   // Trigger settings
@@ -39,31 +40,12 @@ export interface ActionConfig {
 }
 
 /**
- * Helper function to parse comma-separated string into array.
- * 
- * @param input Comma-separated string.
- * @param separator Separator to use for splitting the string.
- * 
- * @returns string[] | null
- */
-function getStrArray(input: string, separator: string = ','): string[] | null {
-  if (!input) {
-    return null;
-  }
-  const strArray = input.split(separator).map(pattern => pattern.trim()).filter(Boolean);
-  return strArray.length > 0 ? strArray : null;
-}
-
-/**
  * Gets and validates the inputs for the GitHub Action.
  * @returns ActionConfig object
  * @throws Error if required inputs are missing
  */
 export function getConfig(): ActionConfig {
-  const triggerLabelsInput = core.getInput('trigger-labels') || '';
-  
-  // Parse trigger labels from comma-separated string into array
-  const triggerLabels = getStrArray(triggerLabelsInput);
+  const triggerLabels = getStrArray('trigger-labels');
   const githubToken = core.getInput('github-token', { required: true });
   const eventPath = core.getInput('event-path');
   const workspace = '/workspace/app';
@@ -90,8 +72,8 @@ export function getConfig(): ActionConfig {
   const openaiApiKey = core.getInput('openai-api-key') || '';
   const openaiBaseUrl = core.getInput('openai-base-url') || '';
 
-  const excludePatterns = getStrArray(core.getInput('exclude-patterns') || '');
-  const includePatterns = getStrArray(core.getInput('include-patterns') || '');
+  const excludePatterns = getStrArray('exclude-patterns');
+  const includePatterns = getStrArray('include-patterns');
 
   if (!anthropicApiKey && !openaiApiKey) {
     throw new Error('API Key is required.');
