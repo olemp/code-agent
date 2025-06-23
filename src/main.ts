@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { getConfig } from './config/config.js';
-import { processEvent } from './github/event.js';
-import { runAction } from './github/action.js';
+import { processEvent } from './github/processEvent.js';
+import { runAction } from './github/runAction.js';
 import { checkPermission } from './security/security.js';
 
 /**

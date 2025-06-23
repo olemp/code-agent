@@ -17,6 +17,12 @@
             "command": "docker push ghcr.io/olemp/code-agent:latest",
             "detail": "",
             "label": "Docker: Push"
+        },
+        {
+            "type": "shell",
+            "command": "npm run build",
+            "detail": "",
+            "label": "TSC: Build"
         }
     ]
 }
