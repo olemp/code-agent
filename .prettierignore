@@ -1,0 +1,12 @@
+.next/
+node_modules/
+public/
+dist/
+build/
+.github/
+.venv/
+venv/
+temp/
+*.lock
+*.log
+*.md

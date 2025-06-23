@@ -2,6 +2,8 @@ import { execa } from 'execa'; // Changed from execaSync
 import * as core from '@actions/core';
 import { ActionConfig } from '../config/config.js';
 import { limit } from '../utils/limit.js';
+import { ICodexResult } from './types.js';
+import _ from 'lodash';
 
 /**
  * Executes the Codex CLI command.
@@ -9,9 +11,9 @@ import { limit } from '../utils/limit.js';
  * @param config The ActionConfig object containing API keys and configuration.
  * @param prompt The user prompt
  * @param timeout Timeout in milliseconds.
- * @returns A promise resolving to the stdout from the Codex CLI. // Changed return type description
+ * @returns A promise resolving to a CodexResult object containing the response text and token usage metrics.
  */
-export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<string> { // Added async and Promise<>
+export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<{ text: string, [key: string]: any }> { // Updated return type to ICodexResult
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = [
@@ -34,6 +36,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
 
     core.info(`Run command: codex ${cliArgs.map(a => limit(a, 50)).join(' ')}`);
     // Changed execaSync to await execa
+    // TODO: #6
     const result = await execa(
       'codex', // Assuming 'codex' is in the PATH
       cliArgs,
@@ -72,13 +75,10 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
 
     const lastLine = codeResult.split('\n').slice(-2, -1)[0];
     const jsonResult = JSON.parse(lastLine);
-    let textResult = '';
-    if (jsonResult && jsonResult.type === 'message' && jsonResult.content && jsonResult.content.length > 0) {
-      textResult = jsonResult.content[0].text + '\n\n';
+    return {
+      text: _.get(jsonResult, 'content[0].text', ''),
+      ...jsonResult
     }
-
-    // return textResult + "<details><summary>Codex Result</summary>\n\n" + codeResult + "\n</details>";
-    return textResult;
 
   } catch (error) {
     // Log the full error for debugging, check for timeout
