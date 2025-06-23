@@ -4,7 +4,7 @@ import { Octokit } from 'octokit';
 
 export interface ActionConfig {
   // Trigger settings
-  triggerLabels: string[];
+  triggerLabels: string[] | null;
   triggerType: 'claude' | 'codex' | null;
 
   // Common settings
@@ -33,6 +33,25 @@ export interface ActionConfig {
   // Codex
   openaiApiKey: string;
   openaiBaseUrl: string;
+
+  excludePatterns?: string[] | null;
+  includePatterns?: string[] | null;
+}
+
+/**
+ * Helper function to parse comma-separated string into array.
+ * 
+ * @param input Comma-separated string.
+ * @param separator Separator to use for splitting the string.
+ * 
+ * @returns string[] | null
+ */
+function getStrArray(input: string, separator: string = ','): string[] | null {
+  if (!input) {
+    return null;
+  }
+  const strArray = input.split(separator).map(pattern => pattern.trim()).filter(Boolean);
+  return strArray.length > 0 ? strArray : null;
 }
 
 /**
@@ -44,7 +63,7 @@ export function getConfig(): ActionConfig {
   const triggerLabelsInput = core.getInput('trigger-labels') || '';
   
   // Parse trigger labels from comma-separated string into array
-  const triggerLabels = triggerLabelsInput.split(',').map(label => label.trim()).filter(Boolean);
+  const triggerLabels = getStrArray(triggerLabelsInput);
   const githubToken = core.getInput('github-token', { required: true });
   const eventPath = core.getInput('event-path');
   const workspace = '/workspace/app';
@@ -70,6 +89,9 @@ export function getConfig(): ActionConfig {
   // Codex / OpenAI
   const openaiApiKey = core.getInput('openai-api-key') || '';
   const openaiBaseUrl = core.getInput('openai-base-url') || '';
+
+  const excludePatterns = getStrArray(core.getInput('exclude-patterns') || '');
+  const includePatterns = getStrArray(core.getInput('include-patterns') || '');
 
   if (!anthropicApiKey && !openaiApiKey) {
     throw new Error('API Key is required.');
@@ -109,5 +131,8 @@ export function getConfig(): ActionConfig {
 
     openaiApiKey,
     openaiBaseUrl,
+
+    excludePatterns,
+    includePatterns,
   };
 }

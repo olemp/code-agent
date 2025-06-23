@@ -4,10 +4,9 @@ import { globSync } from 'glob';
 import ignore from 'ignore';
 import * as path from 'path';
 import { calculateFileHash } from './calculateFileHash.js';
+import { ActionConfig } from '../config/config.js';
 
-interface IFileCaptureOptions {
-  includePatterns?: string[];
-  excludePatterns?: string[];
+interface IFileCaptureOptions extends Pick<ActionConfig, 'excludePatterns' | 'includePatterns'> {
   maxFileSizeBytes?: number;
   excludeFileTypes?: string[];
   prioritizePatterns?: string[];

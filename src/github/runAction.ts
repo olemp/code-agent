@@ -32,7 +32,10 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   await cloneRepository(workspace, githubToken, repo, context, octokit, agentEvent);
 
   // Capture initial file state with optimization
-  const originalFileState = captureFileState(workspace, {});
+  const originalFileState = captureFileState(workspace, {
+    excludePatterns: config.excludePatterns,
+    includePatterns: config.includePatterns,
+  });
 
   // generate Propmt
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
