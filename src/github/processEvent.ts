@@ -39,12 +39,9 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
     }
   }
 
-  // If no command was found in text, check for trigger labels
   if (!type && config?.triggerLabels && config.triggerLabels.length > 0) {
     const eventLabels = extractLabels(eventPayload);
-    core.info(`Found labels: ${eventLabels.join(', ')}`);
 
-    // Check if any of our trigger labels match
     for (const label of eventLabels) {
       if (['claude'].includes(label)) {
         type = 'claude';
@@ -61,9 +58,7 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
       }
     }
 
-    // For label triggers, if there's no explicit prompt, use default
     if (type && !userPrompt) {
-      // For label-triggered events without text, create a default prompt
       if (eventPayload.issue?.title) {
         userPrompt = `Review and address this issue: ${eventPayload.issue.title}\n\n`;
         if (eventPayload.issue.body) {
