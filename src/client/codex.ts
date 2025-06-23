@@ -34,6 +34,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
 
     core.info(`Run command: codex ${cliArgs.map(a => limit(a, 50)).join(' ')}`);
     // Changed execaSync to await execa
+    // TODO: #6
     const result = await execa(
       'codex', // Assuming 'codex' is in the PATH
       cliArgs,
