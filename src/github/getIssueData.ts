@@ -5,8 +5,6 @@ import { RepoContext, GithubContentsData } from './types.js';
 /**
  * Retrieves the body and all comment bodies for a specific issue.
  */
-
-
 export async function getIssueData(
   octokit: Octokit,
   repo: RepoContext,
@@ -14,7 +12,6 @@ export async function getIssueData(
 ): Promise<GithubContentsData> {
   core.info(`Fetching data for issue #${issueNumber}...`);
   try {
-    // Get issue body
     const issueResponse = await octokit.rest.issues.get({
       ...repo,
       issue_number: issueNumber,
