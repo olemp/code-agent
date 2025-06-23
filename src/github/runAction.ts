@@ -25,20 +25,10 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   const { octokit, repo, workspace, githubToken, context, timeoutSeconds } = config;
   const { agentEvent, userPrompt } = processedEvent;
 
-  // Add eyes reaction
   await addEyeReaction(octokit, repo, agentEvent.github);
-
-  // Get the URL for this Action run
-  const actionRunUrl = getActionRunUrl();
-  
-  // Post initial comment, including the Action Run URL if available
-  const initialMessage = `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap.`;
-  
-  const commentWithUrl = actionRunUrl 
-    ? `${initialMessage}\n\n[View Action Run](${actionRunUrl})` 
-    : initialMessage;
+  const actionRunUrl = getActionRunUrl()
     
-  await postComment(octokit, repo, agentEvent.github, commentWithUrl);
+  await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap. Follow the progress [here](${actionRunUrl}) anyway...`);
 
   // Clone repository
   await cloneRepository(workspace, githubToken, repo, context, octokit, agentEvent);
