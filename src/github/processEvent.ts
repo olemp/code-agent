@@ -40,22 +40,21 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
   }
 
   // If no command was found in text, check for trigger labels
-  if (!type && config.triggerLabels.length > 0) {
+  if (!type && config?.triggerLabels && config.triggerLabels.length > 0) {
     const eventLabels = extractLabels(eventPayload);
     core.info(`Found labels: ${eventLabels.join(', ')}`);
 
     // Check if any of our trigger labels match
     for (const label of eventLabels) {
-      if (label === 'claude') {
+      if (['claude'].includes(label)) {
         type = 'claude';
         core.info(`Triggered by 'claude' label`);
         break;
-      } else if (label === 'codex') {
+      } else if (['codex'].includes(label)) {
         type = 'codex';
         core.info(`Triggered by 'codex' label`);
         break;
       } else if (config.triggerLabels.includes(label)) {
-        // If it's a custom trigger label, default to claude unless specified
         type = config.triggerType || 'claude';
         core.info(`Triggered by custom label '${label}'`);
         break;
