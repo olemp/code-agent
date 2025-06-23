@@ -53,7 +53,7 @@ export async function createPullRequest(
       title: `${commitMessage}`,
       head: branchName,
       base: baseBranch, // Use the default branch as base
-      body: `Applied changes based on Issue #${issueNumber}.\n\n${truncateOutput(output)}`,
+      body: `_This pull request was created by the Code Agent and closes #${issueNumber}_.\n\n${truncateOutput(output)}`,
       maintainer_can_modify: true,
     });
 
