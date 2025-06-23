@@ -5,7 +5,7 @@ import { ActionConfig } from '../config/config.js';
 import { captureFileState } from '../file/captureFileState.js';
 import { detectChanges } from '../file/detectChanges.js';
 import { maskSensitiveInfo } from '../security/security.js';
-import { limit } from '../utils/limit.js';
+import { truncate } from '../utils/truncate.js';
 import { handleResult } from './handleResult.js';
 import { addEyeReaction } from './addEyeReaction.js';
 import { cloneRepository } from './cloneRepository.js';
@@ -45,7 +45,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
 
-  core.info(`Woof! Just sniffing out the first bit of that prompt (first 100 characters): \n${limit(prompt, 100)}`);
+  core.info(`Woof! Just sniffing out the first bit of that prompt (first 100 characters): \n${truncate(prompt, 100)}`);
   let output;
   try {
     let rawOutput: string;

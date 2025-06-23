@@ -3,6 +3,7 @@ import { ActionConfig } from '../config/config.js';
 import { ProcessedEvent } from './types.js';
 import { extractLabels } from './extractLabels.js';
 import { extractText } from './extractText.js';
+import { extractConfigOverrides } from './extractConfigOverrides.js';
 import { getEventType } from './getEventType.js';
 import { loadEventPayload } from './loadEventPayload.js';
 
@@ -21,6 +22,22 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
     return null; // Exit gracefully for unsupported events
   }
   core.info(`Detected event type ${agentEvent.type}`);
+  
+  // Extract any configuration overrides from the issue body
+  const issueBody = eventPayload.issue?.body || eventPayload.pull_request?.body || null;
+  const configOverrides = extractConfigOverrides(issueBody);
+  
+  if (configOverrides) {
+    core.info('Found configuration overrides in issue/PR body');
+    
+    // Apply overrides to the config object
+    for (const [key, value] of Object.entries(configOverrides)) {
+      if (key in config) {
+        core.info(`Overriding config "${key}" with value from issue body`);
+        (config as any)[key] = value;
+      }
+    }
+  }
 
   let userPrompt = "";
   let type: "claude" | "codex" | null = null;
