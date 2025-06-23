@@ -28,7 +28,7 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
   const configOverrides = extractConfigOverrides(issueBody);
   
   if (configOverrides) {
-    core.info('Found configuration overrides in issue/PR body');
+    core.info('Found configuration overrides in issue or pull request body');
     
     // Apply overrides to the config object
     for (const [key, value] of Object.entries(configOverrides)) {
