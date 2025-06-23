@@ -62,6 +62,7 @@ ${changedFiles.join('\n')}
       ],
     });
 
+    core.info(`OpenAI response: ${JSON.stringify(response.choices)}`);
     // Extract commit message from response
     let commitMessage = response.choices[0]?.message?.content?.trim() || '';
     commitMessage = commitMessage.split('\n')[0]; // Take the first line

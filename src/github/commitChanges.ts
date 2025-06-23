@@ -5,11 +5,9 @@ import { RepoContext, GitHubEventPullRequestCommentCreated, GitHubEventPullReque
 import { postComment } from './postComment.js';
 
 /**
- * Commits and pushes changes to the existing PR branch.
+ * Commits changes to the existing PR branch.
  */
-
-
-export async function commitAndPush(
+export async function commitChanges(
   workspace: string,
   octokit: Octokit,
   repo: RepoContext,

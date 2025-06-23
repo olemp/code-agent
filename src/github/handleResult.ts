@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import { generateCommitMessage as generateCommitMessageAnthropic } from '../api/claude.js';
 import { generateCommitMessage as generateCommitMessageOpenAI } from '../api/openai.js';
 import { ActionConfig } from '../config/config.js';
-import { commitAndPush } from './commitAndPush.js';
+import { commitChanges } from './commitChanges.js';
 import { createPullRequest } from './createPullRequest.js';
 import { ProcessedEvent } from './types.js';
 import { postComment } from './postComment.js';
@@ -56,7 +56,7 @@ export async function handleResult(
         output
       );
     } else if (agentEvent.type === 'pullRequestCommentCreated' || agentEvent.type === 'pullRequestReviewCommentCreated') {
-      await commitAndPush(
+      await commitChanges(
         workspace,
         octokit,
         repo,
