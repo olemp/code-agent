@@ -39,7 +39,7 @@ inputs:
   anthropic-bedrock-base-url:
     description: 'Specify the Anthropic Bedrock API base URL'
     required: false
-  anthropic-working-directories:
+  anthropic-include-directories:
     description: 'Comma-separated list of directories to include in the workspace'
     required: false
   anthropic-max-turns:

@@ -86,7 +86,7 @@ export function getConfig(): ActionConfig {
 
   // Claude Code context control
   const maxTurns = core.getInput('anthropic-max-turns') && parseInt(core.getInput('anthropic-max-turns'), 10);
-  const workingDirectories = getStrArray('anthropic-working-directories');
+  const workingDirectories = getStrArray('anthropic-include-directories');
 
   const disabled = (core.getInput('disabled') || '') === '1' || (core.getInput('disabled') || '') === 'true';
 
