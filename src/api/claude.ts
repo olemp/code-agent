@@ -27,11 +27,13 @@ function getAnthropicBedrockClient(config: ActionConfig): AnthropicBedrock {
 }
 
 /**
- * Function to generate Git commit messages using Anthropic API
+ * Function to generate Git commit messages using Anthropic API.
+ * 
  * @param changedFiles List of changed files
  * @param userPrompt User's original prompt to Claude
  * @param context Context information (PR number, Issue number, etc.)
  * @param config Optional ActionConfig for additional settings
+ * 
  * @returns Generated commit message
  */
 export async function generateCommitMessage(
@@ -41,8 +43,7 @@ export async function generateCommitMessage(
   config: ActionConfig
 ): Promise<string> {
   try {
-    // Create prompt
-    let prompt = `Based on the following file changed and User Request, generate a concise and clear git commit message in all lowercase.
+    let userContent = `Based on the following file changed and User Request, generate a concise and clear git commit message in all lowercase.
 The commit message should follow this format:
 * Start with a tag for the type of change (e.g. "fix", "feat", "docs", "style", "refactor", "test", "chore"), example: "fix: remove unused code"
 * Summary of changes (50 characters or less). Please do not include any other text.
@@ -50,17 +51,16 @@ The commit message should follow this format:
 User Request:
 ${userPrompt}
 
-files changed:
+Files changed:
 \`\`\`
 ${changedFiles.join('\n')}
 \`\`\``;
 
-    // Add context information if available
     if (context.prNumber) {
-      prompt += `\n\nThis change is related to PR #${context.prNumber}.`;
+      userContent += `\n\nThis change is related to PR #${context.prNumber}.`;
     }
     if (context.issueNumber) {
-      prompt += `\n\nThis change is related to Issue #${context.issueNumber}.`;
+      userContent += `\n\nThis change is related to Issue #${context.issueNumber}.`;
     }
 
     const anthropic = config.claudeCodeUseBedrock ? getAnthropicBedrockClient(config) : getAnthropicClient(config);
@@ -71,7 +71,7 @@ ${changedFiles.join('\n')}
     const response = await anthropic.messages.create({
       model: model,
       max_tokens: 256,
-      messages: [{ role: "user", content: prompt }],
+      messages: [{ role: "user", content: userContent }],
     });
 
     // Extract commit message from response
