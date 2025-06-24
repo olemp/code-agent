@@ -39,6 +39,13 @@ inputs:
   anthropic-bedrock-base-url:
     description: 'Specify the Anthropic Bedrock API base URL'
     required: false
+  anthropic-working-directories:
+    description: 'Comma-separated list of directories to include in the workspace'
+    required: false
+  anthropic-max-turns:
+    description: 'Specify the maximum number of turns to allow'
+    required: false
+
   aws-access-key-id:
     description: 'Specify the AWS Access Key ID for Bedrock'
     required: false
