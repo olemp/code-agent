@@ -3,6 +3,7 @@ import { execa } from 'execa'; // Changed from execaSync
 import _ from 'lodash';
 import { ActionConfig } from '../config/config.js';
 import { truncate } from '../utils/truncate.js';
+import { estimateTokens, truncateToTokenLimit } from '../utils/tokenEstimator.js';
 
 /**
  * Executes the Codex CLI command.
@@ -18,6 +19,19 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
   if(!config.openaiApiKey) {
     throw new Error('An OpenAI API key is required to run Codex. Please check your workflow configuration.');
   }
+  
+  // Apply additional token limiting at the client level if configured
+  let processedPrompt = prompt;
+  if (config.enableContextTruncation && config.maxContextTokens && config.maxContextTokens > 0) {
+    const estimatedTokens = estimateTokens(prompt);
+    if (estimatedTokens > config.maxContextTokens) {
+      core.info(`Prompt estimated at ${estimatedTokens} tokens, truncating to ${config.maxContextTokens} tokens`);
+      processedPrompt = truncateToTokenLimit(prompt, config.maxContextTokens);
+    } else {
+      core.info(`Prompt estimated at ${estimatedTokens} tokens (within ${config.maxContextTokens} token limit)`);
+    }
+  }
+  
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = [
@@ -25,7 +39,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       '--full-auto',
       '--dangerously-auto-approve-everything',
       '--quiet',
-      prompt
+      processedPrompt
     ].filter(Boolean)
 
     const envVars: Record<string, string> = {

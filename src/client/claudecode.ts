@@ -1,6 +1,7 @@
 import { execaSync } from 'execa';
 import * as core from '@actions/core';
 import { ActionConfig } from '../config/config.js';
+import { estimateTokens, truncateToTokenLimit } from '../utils/tokenEstimator.js';
 
 /**
  * Executes the Claude Code CLI command.
@@ -16,9 +17,22 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
   if (!config.anthropicApiKey) {
     throw new Error('An Anthropic API key is required to run Claude Code. Please check your workflow configuration.');
   }
+  
+  // Apply additional token limiting at the client level if configured
+  let processedPrompt = prompt;
+  if (config.enableContextTruncation && config.maxContextTokens && config.maxContextTokens > 0) {
+    const estimatedTokens = estimateTokens(prompt);
+    if (estimatedTokens > config.maxContextTokens) {
+      core.info(`Prompt estimated at ${estimatedTokens} tokens, truncating to ${config.maxContextTokens} tokens`);
+      processedPrompt = truncateToTokenLimit(prompt, config.maxContextTokens);
+    } else {
+      core.info(`Prompt estimated at ${estimatedTokens} tokens (within ${config.maxContextTokens} token limit)`);
+    }
+  }
+  
   core.info(`Executing Claude Code CLI in ${workspace} with timeout ${timeout}ms`);
   try {
-    const cliArgs = ['-p', prompt, '--allowedTools', 'Bash,Edit,Write,Replace'];
+    const cliArgs = ['-p', processedPrompt, '--allowedTools', 'Bash,Edit,Write,Replace'];
 
     const envVars: Record<string, string> = {
       ...process.env,

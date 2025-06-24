@@ -39,6 +39,12 @@ export interface ActionConfig {
   excludePatterns?: string[] | null;
   includePatterns?: string[] | null;
 
+  // Context/Token limiting
+  maxContextTokens?: number;
+  maxHistoryComments?: number;
+  maxChangedFilesInContext?: number;
+  enableContextTruncation?: boolean;
+
   // Disabled flag
   disabled: boolean;
 }
@@ -79,6 +85,12 @@ export function getConfig(): ActionConfig {
 
   const excludePatterns = getStrArray('exclude-patterns');
   const includePatterns = getStrArray('include-patterns');
+
+  // Context/Token limiting configurations
+  const maxContextTokens = core.getInput('max-context-tokens') ? parseInt(core.getInput('max-context-tokens'), 10) : undefined;
+  const maxHistoryComments = core.getInput('max-history-comments') ? parseInt(core.getInput('max-history-comments'), 10) : undefined;
+  const maxChangedFilesInContext = core.getInput('max-changed-files-context') ? parseInt(core.getInput('max-changed-files-context'), 10) : undefined;
+  const enableContextTruncation = (core.getInput('enable-context-truncation') || '') === '1' || (core.getInput('enable-context-truncation') || '') === 'true';
 
   const disabled = (core.getInput('disabled') || '') === '1' || (core.getInput('disabled') || '') === 'true';
 
@@ -124,6 +136,11 @@ export function getConfig(): ActionConfig {
 
     excludePatterns,
     includePatterns,
+    
+    maxContextTokens,
+    maxHistoryComments,
+    maxChangedFilesInContext,
+    enableContextTruncation,
     
     disabled,
   };
