@@ -85,7 +85,7 @@ export function getConfig(): ActionConfig {
   const includePatterns = getStrArray('include-patterns');
 
   // Claude Code context control
-  const maxTurns = core.getInput('anthropic-max-turns') ? parseInt(core.getInput('anthropic-max-turns'), 10) : 5;
+  const maxTurns = core.getInput('anthropic-max-turns') && parseInt(core.getInput('anthropic-max-turns'), 10);
   const workingDirectories = getStrArray('anthropic-working-directories');
 
   const disabled = (core.getInput('disabled') || '') === '1' || (core.getInput('disabled') || '') === 'true';
