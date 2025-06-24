@@ -53,7 +53,8 @@ export async function handleResult(
         repo,
         agentEvent.github,
         commitMessage,
-        output
+        output,
+        processedEvent.type
       );
     } else if (agentEvent.type === 'pullRequestCommentCreated' || agentEvent.type === 'pullRequestReviewCommentCreated') {
       await commitChanges(
