@@ -6,8 +6,7 @@ import { getChangedFiles } from './getChangedFiles.js';
 import { ActionConfig } from '../config/config.js';
 import { 
   estimateTokens, 
-  truncateToTokenLimit, 
-  truncateArrayToTokenLimit 
+  truncateToTokenLimit 
 } from '../utils/tokenEstimator.js';
 
 
