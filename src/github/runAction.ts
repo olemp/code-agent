@@ -13,7 +13,7 @@ import { ProcessedEvent } from './types.js';
 import { generatePrompt } from './generatePrompt.js';
 import { postComment } from './postComment.js';
 import { getActionRunUrl } from './getActionRunUrl.js';
-import { createFilteredWorkspace, cleanupFilteredWorkspace } from '../file/createFilteredWorkspace.js';
+import { createAllCliConfigs, cleanupCliConfigs } from '../utils/createCliConfigs.js';
 
 /**
  * Executes the main logic of the GitHub Action.
@@ -47,9 +47,9 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
     return;
   }
 
-  // Create filtered workspace for CLI execution to limit codebase context
-  const cliWorkspace = createFilteredWorkspace(workspace, config);
-  
+  // Create CLI configuration files to control context and file access
+  createAllCliConfigs(workspace, config);
+
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt, config);
 
   core.info(`Woof! Just sniffing out the first bit of that prompt (first 50 characters): ${truncate(prompt, 50)}`);
@@ -58,11 +58,11 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
     let rawOutput: string;
     switch (processedEvent.type) {
       case 'codex':
-        const codexResult = await runCodex(cliWorkspace, config, prompt, timeoutSeconds * 1000);
+        const codexResult = await runCodex(workspace, config, prompt, timeoutSeconds * 1000);
         rawOutput = codexResult.text; 
         break;
       case 'claude':
-        rawOutput = runClaudeCode(cliWorkspace, config, prompt, timeoutSeconds * 1000);
+        rawOutput = runClaudeCode(workspace, config, prompt, timeoutSeconds * 1000);
         break;
       default:
         throw new Error(`Unknown event type: ${processedEvent.type}`);
@@ -75,8 +75,6 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
       agentEvent.github,
       `Bork! Drat! Beagle the Code Agent tried, but I seem to be having a bad dog day: ${error instanceof Error ? error.message : String(error)}`
     );
-    // Cleanup filtered workspace on error
-    cleanupFilteredWorkspace(cliWorkspace, workspace);
     return;
   }
 
@@ -84,6 +82,6 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   await handleResult(config, processedEvent, output, changedFiles);
   
-  // Cleanup filtered workspace after successful completion
-  cleanupFilteredWorkspace(cliWorkspace, workspace);
+  // Cleanup auto-generated CLI config files
+  cleanupCliConfigs(workspace);
 }

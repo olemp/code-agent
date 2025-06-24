@@ -69,6 +69,34 @@ inputs:
     description: 'Comma-separated list of patterns to include'
     required: false
 
+  # Context/Token limiting
+  max-context-tokens:
+    description: 'Maximum context tokens allowed for prompts'
+    required: false
+  max-history-comments:
+    description: 'Maximum number of historical comments to include'
+    required: false
+  max-changed-files-context:
+    description: 'Maximum number of changed files to include in context'
+    required: false
+  enable-context-truncation:
+    description: 'Enable context truncation (true/false or 1/0)'
+    required: false
+
+  # Codebase filtering
+  max-codebase-files:
+    description: 'Maximum number of files to include from codebase'
+    required: false
+  max-codebase-size-mb:
+    description: 'Maximum codebase size in MB'
+    required: false
+  enable-codebase-filtering:
+    description: 'Enable codebase filtering (true/false or 1/0)'
+    required: false
+  prioritize-recent-files:
+    description: 'Prioritize recently modified files (true/false or 1/0)'
+    required: false
+
   disabled:
     description: 'Disable the action (0 or 1, true or false)'
     required: false
