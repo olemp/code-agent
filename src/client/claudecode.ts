@@ -16,7 +16,7 @@ import { createTempWorkspace } from '../utils/workspace/createTempWorkspace.js';
  */
 export function runClaudeCode(workspace: string, config: ActionConfig, prompt: string, timeout: number): string {
   if (!config.anthropicApiKey) {
-    throw new Error('An Anthropic API key is required to run Claude Code. Please check your workflow configuration.');
+    throw new Error('❌ an anthropic api key is required to run claude code. please check your workflow configuration.');
   }
   
   let workingDir = workspace;
