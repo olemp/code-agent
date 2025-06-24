@@ -27,11 +27,11 @@ export async function runAction(context: ActionContext): Promise<void> {
   const actionRunUrl = getActionRunUrl()
     
   if (config.disabled) {
-    await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! You disabled me, so I'm not doing anything.`);
+    await postComment(context, `Bork! It's Beagle, your furry Code Agent! You disabled me, so I'm not doing anything.`);
     return;
   }
 
-  await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap. Follow the progress [here](${actionRunUrl}) anyway...`);
+  await postComment(context, `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap. Follow the progress [here](${actionRunUrl}) anyway...`);
 
   await cloneRepository(workspace, githubToken, repo, githubContext, octokit, agentEvent);
 
