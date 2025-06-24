@@ -11,12 +11,8 @@ export async function run(): Promise<void> {
   try {
     const config = getConfig();
     
-    let context: ActionContext;
-    try {
-      context = new ActionContext(config);
-    } catch (error) {
-      // ActionContext constructor handles processEvent internally
-      // If it fails, it means no valid trigger was found
+    let context = new ActionContext(config);
+    if(!context.event) {
       return;
     }
 

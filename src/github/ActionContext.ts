@@ -9,11 +9,7 @@ export class ActionContext {
   constructor(config: ActionConfig) {
     this.config = config;
     
-    const processedEvent = processEvent(config);
-    if (!processedEvent) {
-      throw new Error('Failed to process event - no valid trigger found');
-    }
-    
+    const processedEvent = processEvent(config) as ProcessedEvent;
     this.event = processedEvent;
   }
 }
