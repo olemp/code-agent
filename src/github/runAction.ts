@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 import { runClaudeCode } from '../client/claudecode.js';
 import { runCodex } from '../client/codex.js';
-import { ActionConfig } from '../config/config.js';
 import { captureFileState } from '../file/captureFileState.js';
 import { detectChanges } from '../file/detectChanges.js';
 import { maskSensitiveInfo } from '../security/security.js';
@@ -9,19 +8,19 @@ import { truncate } from '../utils/truncate.js';
 import { handleResult } from './handleResult.js';
 import { addEyeReaction } from './addEyeReaction.js';
 import { cloneRepository } from './cloneRepository.js';
-import { ProcessedEvent } from './types.js';
 import { generatePrompt } from './generatePrompt.js';
 import { postComment } from './postComment.js';
 import { getActionRunUrl } from './getActionRunUrl.js';
+import { ActionContext } from './ActionContext.js';
 
 /**
  * Executes the main logic of the GitHub Action.
  * 
- * @param config Action configuration.
- * @param processedEvent Processed event data.
+ * @param context Action context containing config and event data.
  */
-export async function runAction(config: ActionConfig, processedEvent: ProcessedEvent): Promise<void> {
-  const { octokit, repo, workspace, githubToken, context, timeoutSeconds } = config;
+export async function runAction(context: ActionContext): Promise<void> {
+  const { config, event: processedEvent } = context;
+  const { octokit, repo, workspace, githubToken, context: githubContext, timeoutSeconds } = config;
   const { agentEvent, userPrompt } = processedEvent;
 
   await addEyeReaction(octokit, repo, agentEvent.github);
@@ -34,7 +33,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap. Follow the progress [here](${actionRunUrl}) anyway...`);
 
-  await cloneRepository(workspace, githubToken, repo, context, octokit, agentEvent);
+  await cloneRepository(workspace, githubToken, repo, githubContext, octokit, agentEvent);
 
   const originalFileState = captureFileState(workspace, {
     excludePatterns: config.excludePatterns,
