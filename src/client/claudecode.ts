@@ -16,7 +16,7 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
   if (!config.anthropicApiKey) {
     throw new Error('An Anthropic API key is required to run Claude Code. Please check your workflow configuration.');
   }
-  core.info(`Executing Claude Code CLI in ${workspace} with timeout ${timeout}ms`);
+  core.info(`🚀 executing claude code cli in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = ['-p', prompt, '--allowedTools', 'Bash,Edit,Write,Replace'];
 
@@ -60,7 +60,7 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
         envVars.AWS_REGION = config.awsRegion;
       }
 
-      core.info('Running Claude Code with AWS Bedrock configuration');
+      core.info('☁️ running claude code with aws bedrock configuration');
     }
 
     const result = execaSync(
@@ -75,10 +75,10 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
       }
     );
 
-    core.info(`Claude Code CLI exited with code ${result.exitCode}`);
+    core.info(`✅ claude code cli exited with code ${result.exitCode}`);
 
     if (result.stderr) {
-      core.warning(`Claude Code command stderr: ${result.stderr}`);
+      core.warning(`⚠️ claude code command stderr: ${result.stderr}`);
       if (result.stderr.includes('Credit balance is too low')) {
         throw new Error('Credit balance is too low');
       }
@@ -86,14 +86,14 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
     }
 
     if (result.failed || result.exitCode !== 0) {
-      core.error(`Claude Code command failed. Exit code: ${result.exitCode}, stdout: ${result.stdout}, stderr: ${result.stderr}`);
+      core.error(`❌ claude code command failed. exit code: ${result.exitCode}, stdout: ${result.stdout}, stderr: ${result.stderr}`);
       throw new Error(`Claude Code command failed with exit code ${result.exitCode}. Check logs for details.`);
     }
 
     return result.stdout || '';
 
   } catch (error) {
-    core.error(`Error executing Claude Code command: ${error instanceof Error ? error.stack : String(error)}`);
+    core.error(`❌ error executing claude code command: ${error instanceof Error ? error.stack : String(error)}`);
     if (error instanceof Error && error.message.includes('Credit balance is too low')) {
       throw error;
     } else {

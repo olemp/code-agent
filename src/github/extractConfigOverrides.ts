@@ -44,10 +44,10 @@ export function extractConfigOverrides(body: string | null): ConfigOverrides | n
             ? yaml.load(configContent) as ConfigOverrides
             : JSON.parse(configContent) as ConfigOverrides;
 
-        core.debug(`Extracted config overrides: ${JSON.stringify(config)}`);
+        core.debug(`⚙️ extracted config overrides: ${JSON.stringify(config)}`);
         return config;
     } catch (error) {
-        core.warning(`Failed to parse config overrides: ${error instanceof Error ? error.message : String(error)}`);
+        core.warning(`⚠️ failed to parse config overrides: ${error instanceof Error ? error.message : String(error)}`);
         return null;
     }
 }

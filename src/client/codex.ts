@@ -18,7 +18,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
   if(!config.openaiApiKey) {
     throw new Error('An OpenAI API key is required to run Codex. Please check your workflow configuration.');
   }
-  core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
+  core.info(`🚀 executing codex cli in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = [
       config.openaiModel && `-m ${config.openaiModel}`,
@@ -38,7 +38,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       envVars.OPENAI_API_BASE_URL = config.openaiBaseUrl;
     }
 
-    core.info(`Run command: codex ${cliArgs.map(a => truncate(a, 50)).join(' ')}`);
+    core.info(`💻 run command: codex ${cliArgs.map(a => truncate(a, 50)).join(' ')}`);
     const result = await execa(
       'codex',
       cliArgs,
@@ -51,24 +51,24 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       }
     );
 
-    core.info(`Codex CLI exited with code ${result.exitCode}`);
+    core.info(`✅ codex cli exited with code ${result.exitCode}`);
 
     if (result.stderr) {
       if (result.exitCode !== 0) {
-        core.error(`Codex command failed with stderr. Exit code: ${result.exitCode}, stderr: ${result.stderr}`);
+        core.error(`❌ codex command failed with stderr. exit code: ${result.exitCode}, stderr: ${result.stderr}`);
         throw new Error(`Codex command failed with exit code ${result.exitCode}. Stderr: ${result.stderr}`);
       } else {
-        core.warning(`Codex command exited successfully but produced stderr: ${result.stderr}`);
+        core.warning(`⚠️ codex command exited successfully but produced stderr: ${result.stderr}`);
       }
     }
 
     if (result.failed || result.exitCode !== 0) {
-      core.error(`Codex command failed. Exit code: ${result.exitCode}, stdout: ${result.stdout}`);
+      core.error(`❌ codex command failed. exit code: ${result.exitCode}, stdout: ${result.stdout}`);
       const errorMessage = result.stderr ? `Stderr: ${result.stderr}` : `Stdout: ${result.stdout}`; 
       throw new Error(`Codex command failed with exit code ${result.exitCode}. ${errorMessage}`);
     }
 
-    core.info(`Codex command executed successfully.\n\m: ${JSON.stringify(result.stdout)}`);
+    core.info(`🎉 codex command executed successfully.\n\m: ${JSON.stringify(result.stdout)}`);
 
     const codeResult = `\`\`\`\n${result.stdout}\n\`\`\``;
 
@@ -80,7 +80,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
     }
 
   } catch (error) {
-    core.error(`Error executing Codex command: ${error instanceof Error ? error.stack : String(error)}`);
+    core.error(`❌ error executing codex command: ${error instanceof Error ? error.stack : String(error)}`);
     if (error instanceof Error && 'timedOut' in error && (error as any).timedOut) {
       throw new Error(`Codex command timed out after ${timeout}ms.`);
     }

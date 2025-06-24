@@ -13,7 +13,7 @@ export async function getPullRequestData(
   repo: RepoContext,
   pullNumber: number
 ): Promise<GithubContentsData> {
-  core.info(`Fetching data for pull request #${pullNumber}...`);
+  core.info(`📊 fetching data for pull request #${pullNumber}...`);
   try {
     // Get PR body
     const prResponse = await octokit.rest.pulls.get({
@@ -37,14 +37,14 @@ export async function getPullRequestData(
       body: comment.body ?? '',
       login: comment.user?.login ?? 'unknown'
     }));
-    core.info(`Fetched ${commentsData.length} comments for PR #${pullNumber}.`);
+    core.info(`✅ fetched ${commentsData.length} comments for pr #${pullNumber}.`);
 
     // Note: This fetches *issue comments* on the PR. To get *review comments* (comments on specific lines of code),
     // you would use `octokit.paginate(octokit.rest.pulls.listReviewComments, { ... })`.
     // The current request asks for "all comments written on the PR", which typically refers to the main conversation thread (issue comments).
     return { content, comments };
   } catch (error) {
-    core.error(`Failed to get data for pull request #${pullNumber}: ${error}`);
+    core.error(`❌ failed to get data for pull request #${pullNumber}: ${error}`);
     throw new Error(`Could not retrieve data for pull request #${pullNumber}: ${error instanceof Error ? error.message : error}`);
   }
 }

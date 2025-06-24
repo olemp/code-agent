@@ -31,7 +31,7 @@ export async function cloneRepository(
     try {
       const prData = await octokit.rest.pulls.get({ ...repo, pull_number: prNumber });
       branchToClone = prData.data.head.ref;
-      core.info(`Cloning PR branch: ${branchToClone}`);
+      core.info(`🌳 cloning pr branch: ${branchToClone}`);
     } catch (e) {
       throw new Error(`Could not get PR branch from API: ${e}`);
     }
@@ -41,11 +41,11 @@ export async function cloneRepository(
     if (!branchToClone) {
       throw new Error('Default branch not found');
     }
-    core.info(`Cloning default branch ${branchToClone}`);
+    core.info(`🌳 cloning default branch ${branchToClone}`);
   }
 
   // Clone the repository
-  core.info(`Cloning repository ${cloneUrl} branch ${branchToClone} into ${workspace}`);
+  core.info(`📋 cloning repository ${cloneUrl} branch ${branchToClone} into ${workspace}`);
   try {
     // Ensure the workspace directory exists and is empty or doesn't exist
     if (fs.existsSync(workspace)) {
@@ -57,7 +57,7 @@ export async function cloneRepository(
     const authenticatedCloneUrl = cloneUrl.replace('https://', `https://x-access-token:${githubToken}@`);
 
     execaSync('git', ['clone', '--depth', '1', '--branch', branchToClone, authenticatedCloneUrl, '.'], { cwd: workspace, stdio: 'inherit' });
-    core.info('Repository cloned successfully.');
+    core.info('✅ repository cloned successfully.');
   } catch (error) {
     throw new Error(`Failed to clone repository: ${error instanceof Error ? error.message : error}`);
   }

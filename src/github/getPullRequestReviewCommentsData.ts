@@ -14,7 +14,7 @@ export async function getPullRequestReviewCommentsData(
   pullNumber: number,
   targetCommentId: number
 ): Promise<GithubContentsData> {
-  core.info(`Fetching data for pull request review comments #${pullNumber}...`);
+  core.info(`📊 fetching data for pull request review comments #${pullNumber}...`);
   try {
     // Get PR body
     const prResponse = await octokit.rest.pulls.get({
@@ -40,11 +40,11 @@ export async function getPullRequestReviewCommentsData(
       body: comment.body ?? '',
       login: comment.user?.login ?? 'anonymous'
     }));
-    core.info(`Fetched ${commentsData.length} review comments for PR #${pullNumber}.`);
+    core.info(`✅ fetched ${commentsData.length} review comments for pr #${pullNumber}.`);
 
     return { content, comments };
   } catch (error) {
-    core.error(`Failed to get data for pull request review comments #${pullNumber}: ${error}`);
+    core.error(`❌ failed to get data for pull request review comments #${pullNumber}: ${error}`);
     throw new Error(`Could not retrieve data for pull request review comments #${pullNumber}: ${error instanceof Error ? error.message : error}`);
   }
 }

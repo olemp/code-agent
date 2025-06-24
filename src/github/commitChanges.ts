@@ -24,55 +24,55 @@ export async function commitChanges(
     try {
       const prData = await octokit.rest.pulls.get({ ...repo, pull_number: prNumber });
       currentBranch = prData.data.head.ref;
-      core.info(`Checked out PR branch: ${currentBranch}`);
+      core.info(`🔄 checked out pr branch: ${currentBranch}`);
       // Ensure we are on the correct branch
       execaSync('git', ['checkout', currentBranch], { cwd: workspace, stdio: 'inherit' });
     } catch (e) {
       // Fallback if PR data fetch fails (should ideally not happen in this context)
-      core.warning(`Could not get PR branch from API, attempting to use current branch: ${e}`);
+      core.warning(`⚠️ could not get pr branch from api, attempting to use current branch: ${e}`);
       const branchResult = execaSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: workspace });
       currentBranch = branchResult.stdout.trim();
-      core.info(`Using current branch from git: ${currentBranch}`);
+      core.info(`🌳 using current branch from git: ${currentBranch}`);
       // Ensure we are on the correct branch if the checkout happened before the action ran
       execaSync('git', ['checkout', currentBranch], { cwd: workspace, stdio: 'inherit' });
     }
 
-    core.info('Configuring Git user identity locally...');
+    core.info('⚙️ configuring git user identity locally...');
     execaSync('git', ['config', 'user.name', 'github-actions[bot]'], { cwd: workspace, stdio: 'inherit' });
     execaSync('git', ['config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], { cwd: workspace, stdio: 'inherit' });
 
-    core.info('Adding changed files to Git...');
+    core.info('➕ adding changed files to git...');
     // Add all changed files (including deleted ones)
     execaSync('git', ['add', '-A'], { cwd: workspace, stdio: 'inherit' });
 
     // Check if there are changes to commit
     const statusResult = execaSync('git', ['status', '--porcelain'], { cwd: workspace });
     if (!statusResult.stdout.trim()) {
-      core.info('No changes to commit.');
+      core.info('⚠️ no changes to commit.');
       // Post a comment indicating no changes were made or output if relevant
       await postComment(octokit, repo, event, `${output}`);
       return; // Exit early if no changes
     }
 
 
-    core.info('Committing changes...');
+    core.info('💾 committing changes...');
     execaSync('git', ['commit', '-m', commitMessage], { cwd: workspace, stdio: 'inherit' });
 
-    core.info(`Pushing changes to origin/${currentBranch}...`);
+    core.info(`🚀 pushing changes to origin/${currentBranch}...`);
     execaSync('git', ['push', 'origin', currentBranch], { cwd: workspace, stdio: 'inherit' });
 
-    core.info('Changes committed and pushed.');
+    core.info('✅ changes committed and pushed.');
 
     // Post a comment confirming the changes
     await postComment(octokit, repo, event, `${output}`);
 
   } catch (error) {
-    core.error(`Error committing and pushing changes: ${error}`);
+    core.error(`❌ error committing and pushing changes: ${error}`);
     // Attempt to post an error comment
     try {
       await postComment(octokit, repo, event, `Failed to apply changes to this PR: ${error instanceof Error ? error.message : String(error)}`);
     } catch (commentError) {
-      core.error(`Failed to post error comment: ${commentError}`);
+      core.error(`❌ failed to post error comment: ${commentError}`);
     }
     throw new Error(`Failed to commit and push changes: ${error instanceof Error ? error.message : error}`);
   }

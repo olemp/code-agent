@@ -48,7 +48,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
 
-  core.info(`Woof! Just sniffing out the first bit of that prompt (first 50 characters): ${truncate(prompt, 50)}`);
+  core.info(`🐕 woof! just sniffing out the first bit of that prompt (first 50 characters): ${truncate(prompt, 50)}`);
   let output;
   try {
     let rawOutput: string;

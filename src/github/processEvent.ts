@@ -18,22 +18,22 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
   const agentEvent = getEventType(eventPayload);
 
   if (!agentEvent) {
-    core.info('Unsupported event type or payload structure.');
+    core.info('🙅‍♂️ unsupported event type or payload structure.');
     return null; // Exit gracefully for unsupported events
   }
-  core.info(`Detected event type ${agentEvent.type}`);
+  core.info(`🔍 detected event type ${agentEvent.type}`);
   
   // Extract any configuration overrides from the issue body
   const issueBody = eventPayload.issue?.body || eventPayload.pull_request?.body || null;
   const configOverrides = extractConfigOverrides(issueBody);
   
   if (configOverrides) {
-    core.info('Found configuration overrides in issue or pull request body');
+    core.info('⚙️ found configuration overrides in issue or pull request body');
     
     // Apply overrides to the config object
     for (const [key, value] of Object.entries(configOverrides)) {
       if (key in config) {
-        core.info(`Overriding config "${key}" with value from issue body`);
+        core.info(`🔄 overriding config "${key}" with value from issue body`);
         (config as any)[key] = value;
       }
     }
@@ -59,15 +59,15 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
     for (const label of eventLabels) {
       if (['claude'].includes(label)) {
         type = 'claude';
-        core.info(`Triggered by 'claude' label`);
+        core.info(`🏷️ triggered by 'claude' label`);
         break;
       } else if (['codex'].includes(label)) {
         type = 'codex';
-        core.info(`Triggered by 'codex' label`);
+        core.info(`🏷️ triggered by 'codex' label`);
         break;
       } else if (config.triggerLabels.includes(label)) {
         type = config.triggerType || 'claude';
-        core.info(`Triggered by custom label '${label}'`);
+        core.info(`🏷️ triggered by custom label '${label}'`);
         break;
       }
     }
@@ -90,12 +90,12 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
   }
 
   if (!type) {
-    core.info('No trigger command or configured label found.');
+    core.info('❌ no trigger command or configured label found.');
     return null;
   }
 
   if (!userPrompt) {
-    core.info('No prompt found after command or in default content.');
+    core.info('❌ no prompt found after command or in default content.');
     return null;
   }
 

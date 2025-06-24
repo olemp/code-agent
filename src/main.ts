@@ -18,7 +18,7 @@ export async function run(): Promise<void> {
 
     const hasPermission = await checkPermission(config);
     if (!hasPermission) {
-      core.warning('Permission check failed. Exiting process.');
+      core.warning('⚠️ permission check failed. exiting process.');
       return;
     }
 

@@ -37,23 +37,23 @@ export async function createPullRequest(
   }
 
   try {
-    core.info('Configuring Git user identity locally...');
+    core.info('⚙️ configuring git user identity locally...');
     execaSync('git', ['config', 'user.name', 'github-actions[bot]'], { cwd: workspace, stdio: 'inherit' });
     execaSync('git', ['config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], { cwd: workspace, stdio: 'inherit' });
 
-    core.info(`Creating new branch: ${branchName}`);
+    core.info(`🌳 creating new branch: ${branchName}`);
     execaSync('git', ['checkout', '-b', branchName], { cwd: workspace, stdio: 'inherit' });
 
-    core.info('Adding changed files to Git...');
+    core.info('➕ adding changed files to git...');
     execaSync('git', ['add', '-A'], { cwd: workspace, stdio: 'inherit' });
 
-    core.info('Committing changes...');
+    core.info('💾 committing changes...');
     execaSync('git', ['commit', '-m', commitMessage], { cwd: workspace, stdio: 'inherit' });
 
-    core.info(`Pushing changes to origin/${branchName}...`);
+    core.info(`🚀 pushing changes to origin/${branchName}...`);
     execaSync('git', ['push', 'origin', branchName, '--force'], { cwd: workspace, stdio: 'inherit' }); // Use force push for simplicity in case branch exists
 
-    core.info('Creating pull request...');
+    core.info('🔀 creating pull request...');
     const pr = await octokit.rest.pulls.create({
       ...repo,
       title: `${commitMessage}`,
@@ -63,7 +63,7 @@ export async function createPullRequest(
       maintainer_can_modify: true,
     });
 
-    core.info(`Pull request created at ${pr.data.html_url}`);
+    core.info(`✅ pull request created at ${pr.data.html_url}`);
 
     // Optionally, post a comment linking to the PR in the original issue
     await octokit.rest.issues.createComment({
@@ -73,7 +73,7 @@ export async function createPullRequest(
     });
 
   } catch (error) {
-    core.error(`Error creating pull request: ${error}`);
+    core.error(`❌ error creating pull request: ${error}`);
     throw new Error(`Failed to create pull request: ${error instanceof Error ? error.message : error}`);
   }
 }

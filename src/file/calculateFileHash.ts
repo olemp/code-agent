@@ -15,7 +15,7 @@ export function calculateFileHash(filePath: string): string {
     return hashSum.digest('hex');
   } catch (error) {
     // Log error but rethrow to be handled by caller, as hash calculation is critical
-    core.error(`Failed to calculate hash for ${filePath}: ${error}`);
+    core.error(`❌ failed to calculate hash for ${filePath}: ${error}`);
     throw error;
   }
 }
