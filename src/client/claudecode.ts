@@ -1,6 +1,8 @@
 import { execaSync } from 'execa';
 import * as core from '@actions/core';
 import { ActionConfig } from '../config/config.js';
+import * as fs from 'fs';
+import { createTempWorkspace } from '../utils/workspace/createTempWorkspace.js';
 
 /**
  * Executes the Claude Code CLI command.
@@ -16,7 +18,18 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
   if (!config.anthropicApiKey) {
     throw new Error('An Anthropic API key is required to run Claude Code. Please check your workflow configuration.');
   }
-  core.info(`🚀 executing claude code cli in ${workspace} with timeout ${timeout}ms`);
+  
+  let workingDir = workspace;
+  let tempDir: string | null = null;
+  
+  // Create temporary workspace if working directories are specified
+  if (config.workingDirectories && config.workingDirectories.length > 0) {
+    tempDir = createTempWorkspace(workspace, config.workingDirectories);
+    workingDir = tempDir;
+    core.info(`🗂️ created temporary workspace at ${tempDir}`);
+  }
+  
+  core.info(`🚀 executing claude code cli in ${workingDir} with timeout ${timeout}ms`);
   try {
     const cliArgs = ['-p', prompt, '--allowedTools', 'Bash,Edit,Write,Replace'];
     
@@ -25,12 +38,7 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
       cliArgs.push('--max-turns', config.maxTurns.toString());
     }
     
-    // Add working directories to limit context scope
-    if (config.workingDirectories && config.workingDirectories.length > 0) {
-      config.workingDirectories.forEach(dir => {
-        cliArgs.push('--add-dir', dir);
-      });
-    }
+    // Note: No need for --add-dir since we're using a limited temp workspace
 
     const envVars: Record<string, string> = {
       ...process.env,
@@ -80,7 +88,7 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
       cliArgs,
       {
         timeout: timeout,
-        cwd: workspace,
+        cwd: workingDir,
         env: envVars,
         stdio: 'pipe', 
         reject: false 
@@ -110,6 +118,12 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
       throw error;
     } else {
       throw new Error(`Failed to execute Claude Code command: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  } finally {
+    // Clean up temporary directory
+    if (tempDir && fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+      core.info(`🗑️ cleaned up temporary workspace ${tempDir}`);
     }
   }
 }
