@@ -7,6 +7,14 @@ import { truncateOutput } from './truncateOutput.js';
 
 /**
  * Creates a pull request with the changes.
+ * 
+ * @param workspace Workspace directory.
+ * @param octokit Octokit instance.
+ * @param repo Repository context.
+ * @param event GitHub event.
+ * @param commitMessage Commit message.
+ * @param output Output from the AI service.
+ * @param type Type of AI service used.
  */
 export async function createPullRequest(
   workspace: string,
@@ -14,12 +22,13 @@ export async function createPullRequest(
   repo: RepoContext,
   event: GitHubEventIssuesOpened | GitHubEventIssueCommentCreated,
   commitMessage: string,
-  output: string
+  output: string,
+  type: "claude" | "codex"
 ): Promise<void> {
   const issueNumber = event.issue.number;
-  let branchName = `code-agent-changes-${issueNumber}`;
+  let branchName = `${type}/${issueNumber}`;
   if (event.action == "created") {
-    branchName = `code-agent-changes-${issueNumber}-${event.comment.id}`;
+    branchName = `${type}/${issueNumber}-${event.comment.id}`;
   }
   const baseBranch = github.context.payload.repository?.default_branch; // Get default branch for base
 
@@ -28,7 +37,6 @@ export async function createPullRequest(
   }
 
   try {
-    // Set up Git and create a new branch
     core.info('Configuring Git user identity locally...');
     execaSync('git', ['config', 'user.name', 'github-actions[bot]'], { cwd: workspace, stdio: 'inherit' });
     execaSync('git', ['config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], { cwd: workspace, stdio: 'inherit' });
