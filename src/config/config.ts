@@ -39,6 +39,10 @@ export interface ActionConfig {
   excludePatterns?: string[] | null;
   includePatterns?: string[] | null;
 
+  // Claude Code context control
+  maxTurns?: number;
+  workingDirectories?: string[] | null;
+
   // Disabled flag
   disabled: boolean;
 }
@@ -79,6 +83,10 @@ export function getConfig(): ActionConfig {
 
   const excludePatterns = getStrArray('exclude-patterns');
   const includePatterns = getStrArray('include-patterns');
+
+  // Claude Code context control
+  const maxTurns = core.getInput('anthropic-max-turns') ? parseInt(core.getInput('anthropic-max-turns'), 10) : 5;
+  const workingDirectories = getStrArray('anthropic-working-directories');
 
   const disabled = (core.getInput('disabled') || '') === '1' || (core.getInput('disabled') || '') === 'true';
 
@@ -124,6 +132,9 @@ export function getConfig(): ActionConfig {
 
     excludePatterns,
     includePatterns,
+
+    maxTurns,
+    workingDirectories,
     
     disabled,
   };

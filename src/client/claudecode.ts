@@ -19,6 +19,18 @@ export function runClaudeCode(workspace: string, config: ActionConfig, prompt: s
   core.info(`🚀 executing claude code cli in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = ['-p', prompt, '--allowedTools', 'Bash,Edit,Write,Replace'];
+    
+    // Add max turns configuration
+    if (config.maxTurns) {
+      cliArgs.push('--max-turns', config.maxTurns.toString());
+    }
+    
+    // Add working directories to limit context scope
+    if (config.workingDirectories && config.workingDirectories.length > 0) {
+      config.workingDirectories.forEach(dir => {
+        cliArgs.push('--add-dir', dir);
+      });
+    }
 
     const envVars: Record<string, string> = {
       ...process.env,
