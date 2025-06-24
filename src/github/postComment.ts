@@ -42,8 +42,8 @@ export async function postComment(
           return;
 
         } catch (commentError) {
-          core.warning(`Failed to check if comment is top-level: ${commentError instanceof Error ? commentError.message : commentError}`);
-          core.info(`Falling back to creating a regular PR comment instead of a reply`);
+          core.warning(`⚠️ failed to check if comment is top-level: ${commentError instanceof Error ? commentError.message : commentError}`);
+          core.info(`🔄 falling back to creating a regular pr comment instead of a reply`);
           await octokit.rest.issues.createComment({
             ...repo,
             issue_number: prNumber,
@@ -65,13 +65,13 @@ export async function postComment(
       if (isRetryableError && retries < maxRetries) {
         retries++;
         const waitTime = retryDelay * retries;
-        core.warning(`Network error when posting comment: ${errorMessage}. Retrying ${retries}/${maxRetries} in ${waitTime}ms...`);
+        core.warning(`🌐 network error when posting comment: ${errorMessage}. retrying ${retries}/${maxRetries} in ${waitTime}ms...`);
 
         await new Promise(resolve => setTimeout(resolve, waitTime));
         continue; // Try again
       }
 
-      core.error(`Failed to post comment after ${retries} retries: ${errorMessage}`);
+      core.error(`❌ failed to post comment after ${retries} retries: ${errorMessage}`);
       return;
     }
   }

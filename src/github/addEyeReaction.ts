@@ -20,7 +20,7 @@ export async function addEyeReaction(
         issue_number: event.issue.number,
         content: 'eyes'
       });
-      core.info(`Added eye reaction to issue #${event.issue.number}`);
+      core.info(`👁️ added eye reaction to issue #${event.issue.number}`);
     } else if (event.action === 'created' && 'comment' in event && 'issue' in event) {
       // Add eye reaction to comment on issue or PR conversation
       await octokit.rest.reactions.createForIssueComment({
@@ -28,7 +28,7 @@ export async function addEyeReaction(
         comment_id: event.comment.id,
         content: 'eyes'
       });
-      core.info(`Added eye reaction to comment on issue/PR #${event.issue.number}`);
+      core.info(`👁️ added eye reaction to comment on issue/pr #${event.issue.number}`);
     } else if (event.action === 'created' && 'comment' in event && 'pull_request' in event) {
       // Add eye reaction to PR review comment
       await octokit.rest.reactions.createForPullRequestReviewComment({
@@ -36,9 +36,9 @@ export async function addEyeReaction(
         comment_id: event.comment.id,
         content: 'eyes'
       });
-      core.info(`Added eye reaction to review comment on PR #${event.pull_request.number}`);
+      core.info(`👁️ added eye reaction to review comment on pr #${event.pull_request.number}`);
     }
   } catch (error) {
-    core.warning(`Failed to add reaction: ${error instanceof Error ? error.message : error}`);
+    core.warning(`⚠️ failed to add reaction: ${error instanceof Error ? error.message : error}`);
   }
 }

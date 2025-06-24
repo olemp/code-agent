@@ -37,7 +37,7 @@ export function captureFileState(
   workspace: string, 
   options: IFileCaptureOptions = {}
 ): Map<string, string> {
-  core.info('Capturing current file state with optimization...');
+  core.info('📷 capturing current file state with optimization...');
   const fileState = new Map<string, string>();
   const gitignorePath = path.join(workspace, '.gitignore');
   const ig = ignore();
@@ -50,16 +50,16 @@ export function captureFileState(
 
   if (options.excludePatterns?.length) {
     options.excludePatterns.forEach(pattern => ig.add(pattern));
-    core.info(`Added ${options.excludePatterns.length} custom exclude patterns`);
+    core.info(`➕ added ${options.excludePatterns.length} custom exclude patterns`);
   }
 
   if (fs.existsSync(gitignorePath)) {
-    core.info(`Reading .gitignore rules from ${gitignorePath}`);
+    core.info(`📄 reading .gitignore rules from ${gitignorePath}`);
     try {
       const gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
       ig.add(gitignoreContent);
     } catch (error) {
-      core.warning(`Failed to read .gitignore at ${gitignorePath}: ${error}. Proceeding with current ignores.`);
+      core.warning(`⚠️ failed to read .gitignore at ${gitignorePath}: ${error}. proceeding with current ignores.`);
     }
   }
 
@@ -67,7 +67,7 @@ export function captureFileState(
 
   if (options.includePatterns?.length) {
     globPatterns = options.includePatterns;
-    core.info(`Using custom include patterns: ${options.includePatterns.join(', ')}`);
+    core.info(`🎯 using custom include patterns: ${options.includePatterns.join(', ')}`);
   }
 
   const allFiles: string[] = [];
@@ -116,13 +116,13 @@ export function captureFileState(
       }
     });
 
-    core.info(`Prioritized ${priorityFiles.length} files based on provided patterns`);
+    core.info(`⬆️ prioritized ${priorityFiles.length} files based on provided patterns`);
     
     // Reorder files to process priority files first
     filesToProcess = [...priorityFiles, ...regularFiles];
   }
 
-  core.info(`Found ${allFiles.length} total files, processing ${filesToProcess.length} files after filtering`);
+  core.info(`🔍 found ${allFiles.length} total files, processing ${filesToProcess.length} files after filtering`);
 
   for (const relativeFilePath of filesToProcess) {
     const absoluteFilePath = path.join(workspace, relativeFilePath);
@@ -131,7 +131,7 @@ export function captureFileState(
       
       // Skip files larger than the size limit
       if (stats.size > maxFileSizeBytes) {
-        core.info(`Skipping file exceeding size limit (${(stats.size / 1024).toFixed(2)}KB): ${relativeFilePath}`);
+        core.info(`⏭️ skipping file exceeding size limit (${(stats.size / 1024).toFixed(2)}kb): ${relativeFilePath}`);
         continue;
       }
       
@@ -141,15 +141,15 @@ export function captureFileState(
         fileState.set(relativeFilePath, hash);
       }
     } catch (error) {
-      core.warning(`Could not process file ${relativeFilePath}: ${error}`);
+      core.warning(`⚠️ could not process file ${relativeFilePath}: ${error}`);
     }
   }
 
   if(fileState.size === 0) {
-    core.warning(`No files were captured after optimization.`);
+    core.warning(`⚠️ no files were captured after optimization.`);
     return new Map<string, string>();
   }
   
-  core.info(`Captured state of ${fileState.size} files after optimization.`);
+  core.info(`✅ captured state of ${fileState.size} files after optimization.`);
   return fileState;
 }

@@ -62,21 +62,21 @@ ${changedFiles.join('\n')}
       ],
     });
 
-    core.info(`OpenAI response: ${JSON.stringify(response.choices)}`);
+    core.info(`🤖 openai response: ${JSON.stringify(response.choices)}`);
     // Extract commit message from response
     let commitMessage = response.choices[0]?.message?.content?.trim() || '';
     commitMessage = commitMessage.split('\n')[0]; // Take the first line
 
     // Fallback if the message is empty or too long (adjust length check if needed)
     if (!commitMessage || commitMessage.length > 100) { // Keep 100 char limit for safety
-      core.warning(`Generated commit message was empty or too long: "${commitMessage}". Falling back.`);
+      core.warning(`⚠️ generated commit message was empty or too long: "${commitMessage}". falling back.`);
       throw new Error("Generated commit message invalid."); // Trigger fallback
     }
 
-    core.info(`Generated commit message: ${commitMessage}`);
+    core.info(`✨ generated commit message: ${commitMessage}`);
     return commitMessage;
   } catch (error) {
-    core.warning(`Error generating commit message with OpenAI: ${error instanceof Error ? error.message : String(error)}. Using fallback.`);
+    core.warning(`⚠️ error generating commit message with openai: ${error instanceof Error ? error.message : String(error)}. using fallback.`);
     if (context.prNumber) {
       return `Apply changes for PR #${context.prNumber}`;
     } else if (context.issueNumber) {

@@ -12,7 +12,7 @@ import { ActionConfig } from '../config/config.js';
  * @returns An array of relative file paths that have been added, modified, or deleted.
  */
 export function detectChanges(workspace: string, originalState: Map<string, string>, config: ActionConfig): string[] {
-  core.info('Detecting file changes by comparing states...');
+  core.info('🔍 detecting file changes by comparing states...');
   const currentState = captureFileState(workspace, {
     excludePatterns: config.excludePatterns,
     includePatterns: config.includePatterns,
@@ -36,9 +36,9 @@ export function detectChanges(workspace: string, originalState: Map<string, stri
   }
 
   if (changedFiles.size > 0) {
-    core.info(`Detected changes in ${changedFiles.size} files: ${Array.from(changedFiles).join(', ')}`);
+    core.info(`📄 detected changes in ${changedFiles.size} files: ${Array.from(changedFiles).join(', ')}`);
   } else {
-    core.info('No file changes detected between states.');
+    core.info('✅ no file changes detected between states.');
   }
 
   return Array.from(changedFiles);

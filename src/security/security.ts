@@ -12,14 +12,14 @@ export async function checkPermission(config: ActionConfig): Promise<boolean> {
   const actor = context.actor;
 
   if (!actor) {
-    core.warning('Actor not found. Permission check failed.');
+    core.warning('⚠️ actor not found. permission check failed.');
     return false;
   }
 
   try {
     return await checkUserPermissionGithub(octokit, repo, actor);
   } catch (error) {
-    core.warning(`Exception occurred during permission check: ${error}`);
+    core.warning(`⚠️ exception occurred during permission check: ${error}`);
     return false;
   }
 }
@@ -47,7 +47,7 @@ async function checkUserPermissionGithub(
 
     return ['admin', 'write'].includes(permission);
   } catch (error) {
-    core.warning(`Error checking user permission: ${error}`);
+    core.warning(`⚠️ error checking user permission: ${error}`);
     return false;
   }
 }

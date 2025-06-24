@@ -10,7 +10,7 @@ export async function getIssueData(
   repo: RepoContext,
   issueNumber: number
 ): Promise<GithubContentsData> {
-  core.info(`Fetching data for issue #${issueNumber}...`);
+  core.info(`📊 fetching data for issue #${issueNumber}...`);
   try {
     const issueResponse = await octokit.rest.issues.get({
       ...repo,
@@ -34,11 +34,11 @@ export async function getIssueData(
       body: comment.body ?? '',
       login: comment.user?.login ?? 'anonymous'
     })); // Extract comment bodies and authors
-    core.info(`Fetched ${commentsData.length} comments for issue #${issueNumber}.`);
+    core.info(`✅ fetched ${commentsData.length} comments for issue #${issueNumber}.`);
 
     return { content, comments };
   } catch (error) {
-    core.error(`Failed to get data for issue #${issueNumber}: ${error}`);
+    core.error(`❌ failed to get data for issue #${issueNumber}: ${error}`);
     throw new Error(`Could not retrieve data for issue #${issueNumber}: ${error instanceof Error ? error.message : error}`);
   }
 }

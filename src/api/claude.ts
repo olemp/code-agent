@@ -83,15 +83,15 @@ ${changedFiles.join('\n')}
 
     // Fallback if the message is empty or too long
     if (!commitMessage || commitMessage.length > 100) {
-      core.warning(`Generated commit message was empty or too long: "${commitMessage}". Falling back.`);
+      core.warning(`⚠️ generated commit message was empty or too long: "${commitMessage}". falling back.`);
       throw new Error("Generated commit message invalid."); // Trigger fallback
     }
 
 
-    core.info(`Generated commit message: ${commitMessage}`);
+    core.info(`✨ generated commit message: ${commitMessage}`);
     return commitMessage;
   } catch (error) {
-    core.warning(`Error generating commit message: ${error instanceof Error ? error.message : String(error)}. Using fallback.`);
+    core.warning(`⚠️ error generating commit message: ${error instanceof Error ? error.message : String(error)}. using fallback.`);
     // Return default message in case of error
     if (context.prNumber) {
       return `Apply changes for PR #${context.prNumber}`;

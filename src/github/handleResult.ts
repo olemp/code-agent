@@ -25,7 +25,7 @@ export async function handleResult(
   const { agentEvent, userPrompt } = processedEvent;
 
   if (changedFiles.length > 0) {
-    core.info(`Detected changes in ${changedFiles.length} files.`);
+    core.info(`📄 detected changes in ${changedFiles.length} files.`);
 
     const generateCommitMessage = processedEvent.type === 'codex'
       ? generateCommitMessageOpenAI
