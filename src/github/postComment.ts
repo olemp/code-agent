@@ -1,21 +1,19 @@
 import * as core from '@actions/core';
-import { Octokit } from 'octokit';
+import { ActionContext } from './ActionContext.js';
 import { truncateOutput } from './truncateOutput.js';
-import { GitHubEvent, RepoContext } from './types.js';
 
 /**
  * Posts a comment to the issue or PR with retry mechanism for transient errors.
  */
 export async function postComment(
-  octokit: Octokit,
-  repo: RepoContext,
-  event: GitHubEvent,
+  context: ActionContext,
   body: string,
   maxRetries = 3,
   retryDelay = 1000
 ): Promise<void> {
   let retries = 0;
-
+  const event = context.event.agentEvent.github;
+  const { octokit, repo } = context.config;
   while (true) {
     try {
       if ('issue' in event) {
@@ -49,7 +47,7 @@ export async function postComment(
             issue_number: prNumber,
             body: truncateOutput(body),
           });
-          return; 
+          return;
         }
       }
       return; // If we get here without an event match, just return
