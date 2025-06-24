@@ -25,11 +25,10 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       prompt
     ].filter(Boolean)
 
-    // Set up environment variables
     const envVars: Record<string, string> = {
       ...process.env,
       OPENAI_API_KEY: config.openaiApiKey,
-      CODEX_QUIET_MODE: '1',
+      CODEX_QUIET_MODE: '0',
     };
 
     if (config.openaiBaseUrl) {
@@ -41,19 +40,17 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       'codex',
       cliArgs,
       {
-        timeout: timeout,
+        timeout,
         cwd: workspace,
         env: envVars,
-        stdio: 'pipe', // Capture stdout/stderr
-        reject: false // Don't throw on non-zero exit code, handle it below
+        stdio: 'pipe',
+        reject: false
       }
     );
 
     core.info(`Codex CLI exited with code ${result.exitCode}`);
 
-    // Adjusted error handling for async execa and stderr presence
     if (result.stderr) {
-      // Log stderr even if exit code is 0, but only throw if non-zero
       if (result.exitCode !== 0) {
         core.error(`Codex command failed with stderr. Exit code: ${result.exitCode}, stderr: ${result.stderr}`);
         throw new Error(`Codex command failed with exit code ${result.exitCode}. Stderr: ${result.stderr}`);
@@ -68,9 +65,8 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
       throw new Error(`Codex command failed with exit code ${result.exitCode}. ${errorMessage}`);
     }
 
-    core.info('Codex command executed successfully.');
+    core.info(`Codex command executed successfully.\n\m: ${JSON.stringify(result.stdout)}`);
 
-    // stdout parse
     const codeResult = `\`\`\`\n${result.stdout}\n\`\`\``;
 
     const lastLine = codeResult.split('\n').slice(-2, -1)[0];
