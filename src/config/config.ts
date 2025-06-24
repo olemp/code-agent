@@ -45,6 +45,12 @@ export interface ActionConfig {
   maxChangedFilesInContext?: number;
   enableContextTruncation?: boolean;
 
+  // Codebase filtering
+  maxCodebaseFiles?: number;
+  maxCodebaseSizeBytes?: number;
+  enableCodebaseFiltering?: boolean;
+  prioritizeRecentFiles?: boolean;
+
   // Disabled flag
   disabled: boolean;
 }
@@ -91,6 +97,12 @@ export function getConfig(): ActionConfig {
   const maxHistoryComments = core.getInput('max-history-comments') ? parseInt(core.getInput('max-history-comments'), 10) : undefined;
   const maxChangedFilesInContext = core.getInput('max-changed-files-context') ? parseInt(core.getInput('max-changed-files-context'), 10) : undefined;
   const enableContextTruncation = (core.getInput('enable-context-truncation') || '') === '1' || (core.getInput('enable-context-truncation') || '') === 'true';
+
+  // Codebase filtering configurations
+  const maxCodebaseFiles = core.getInput('max-codebase-files') ? parseInt(core.getInput('max-codebase-files'), 10) : undefined;
+  const maxCodebaseSizeBytes = core.getInput('max-codebase-size-mb') ? parseInt(core.getInput('max-codebase-size-mb'), 10) * 1024 * 1024 : undefined;
+  const enableCodebaseFiltering = (core.getInput('enable-codebase-filtering') || '') === '1' || (core.getInput('enable-codebase-filtering') || '') === 'true';
+  const prioritizeRecentFiles = (core.getInput('prioritize-recent-files') || '') === '1' || (core.getInput('prioritize-recent-files') || '') === 'true';
 
   const disabled = (core.getInput('disabled') || '') === '1' || (core.getInput('disabled') || '') === 'true';
 
@@ -141,6 +153,11 @@ export function getConfig(): ActionConfig {
     maxHistoryComments,
     maxChangedFilesInContext,
     enableContextTruncation,
+    
+    maxCodebaseFiles,
+    maxCodebaseSizeBytes,
+    enableCodebaseFiltering,
+    prioritizeRecentFiles,
     
     disabled,
   };
