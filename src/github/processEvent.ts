@@ -42,17 +42,14 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
   let userPrompt = "";
   let type: "claude" | "codex" | null = null;
 
-  // Check for /claude and /codex commands in text
   const text = extractText(agentEvent.github);
   if (text) {
     if (text.startsWith('/claude')) {
       userPrompt = text.replace('/claude', '').trim();
       type = "claude";
-      core.info(`Found '/claude' command in text`);
     } else if (text.startsWith('/codex')) {
       userPrompt = text.replace('/codex', '').trim();
       type = "codex";
-      core.info(`Found '/codex' command in text`);
     }
   }
 
@@ -92,13 +89,11 @@ export function processEvent(config: ActionConfig): ProcessedEvent | null {
     }
   }
 
-  // If no trigger type was detected, exit gracefully
   if (!type) {
     core.info('No trigger command or configured label found.');
     return null;
   }
 
-  // If no prompt was found, exit gracefully
   if (!userPrompt) {
     core.info('No prompt found after command or in default content.');
     return null;

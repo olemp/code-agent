@@ -15,6 +15,9 @@ import { truncate } from '../utils/truncate.js';
  * @returns A promise resolving to a CodexResult object containing the response text and token usage metrics.
  */
 export async function runCodex(workspace: string, config: ActionConfig, prompt: string, timeout: number): Promise<{ text: string, [key: string]: any }> { 
+  if(!config.openaiApiKey) {
+    throw new Error('An OpenAI API key is required to run Codex. Please check your workflow configuration.');
+  }
   core.info(`Executing Codex CLI in ${workspace} with timeout ${timeout}ms`);
   try {
     const cliArgs = [
@@ -61,7 +64,7 @@ export async function runCodex(workspace: string, config: ActionConfig, prompt: 
 
     if (result.failed || result.exitCode !== 0) {
       core.error(`Codex command failed. Exit code: ${result.exitCode}, stdout: ${result.stdout}`);
-      const errorMessage = result.stderr ? `Stderr: ${result.stderr}` : `Stdout: ${result.stdout}`; // Use already captured stderr if available
+      const errorMessage = result.stderr ? `Stderr: ${result.stderr}` : `Stdout: ${result.stdout}`; 
       throw new Error(`Codex command failed with exit code ${result.exitCode}. ${errorMessage}`);
     }
 

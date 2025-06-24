@@ -34,10 +34,8 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap. Follow the progress [here](${actionRunUrl}) anyway...`);
 
-  // Clone repository
   await cloneRepository(workspace, githubToken, repo, context, octokit, agentEvent);
 
-  // Capture initial file state with optimization
   const originalFileState = captureFileState(workspace, {
     excludePatterns: config.excludePatterns,
     includePatterns: config.includePatterns,
@@ -50,15 +48,20 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
 
   const prompt = await generatePrompt(octokit, repo, agentEvent, userPrompt);
 
-  core.info(`Woof! Just sniffing out the first bit of that prompt (first 100 characters): \n${truncate(prompt, 100)}`);
+  core.info(`Woof! Just sniffing out the first bit of that prompt (first 50 characters): ${truncate(prompt, 50)}`);
   let output;
   try {
     let rawOutput: string;
-    if (processedEvent.type === 'codex') {
-      const codexResult = await runCodex(workspace, config, prompt, timeoutSeconds * 1000);
-      rawOutput = codexResult.text; 
-    } else {
-      rawOutput = runClaudeCode(workspace, config, prompt, timeoutSeconds * 1000);
+    switch (processedEvent.type) {
+      case 'codex':
+        const codexResult = await runCodex(workspace, config, prompt, timeoutSeconds * 1000);
+        rawOutput = codexResult.text; 
+        break;
+      case 'claude':
+        rawOutput = runClaudeCode(workspace, config, prompt, timeoutSeconds * 1000);
+        break;
+      default:
+        throw new Error(`Unknown event type: ${processedEvent.type}`);
     }
     output = maskSensitiveInfo(rawOutput, config);
   } catch (error) {
@@ -66,7 +69,7 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
       octokit,
       repo,
       agentEvent.github,
-      `Bork! Drat! Beagle the Code Agent tried, but the CLI seems to be having a bad dog day: ${error instanceof Error ? error.message : String(error)}`
+      `Bork! Drat! Beagle the Code Agent tried, but I seem to be having a bad dog day: ${error instanceof Error ? error.message : String(error)}`
     );
     return;
   }
