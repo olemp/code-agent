@@ -38,6 +38,9 @@ export interface ActionConfig {
 
   excludePatterns?: string[] | null;
   includePatterns?: string[] | null;
+
+  // Disabled flag
+  disabled: boolean;
 }
 
 /**
@@ -76,6 +79,8 @@ export function getConfig(): ActionConfig {
 
   const excludePatterns = getStrArray('exclude-patterns');
   const includePatterns = getStrArray('include-patterns');
+
+  const disabled = (core.getInput('disabled') || '') === '1' || (core.getInput('disabled') || '') === 'true';
 
   if (!anthropicApiKey && !openaiApiKey) {
     throw new Error('API Key is required.');
@@ -119,5 +124,7 @@ export function getConfig(): ActionConfig {
 
     excludePatterns,
     includePatterns,
+    
+    disabled,
   };
 }

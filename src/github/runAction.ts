@@ -20,7 +20,6 @@ import { getActionRunUrl } from './getActionRunUrl.js';
  * @param config Action configuration.
  * @param processedEvent Processed event data.
  */
-
 export async function runAction(config: ActionConfig, processedEvent: ProcessedEvent): Promise<void> {
   const { octokit, repo, workspace, githubToken, context, timeoutSeconds } = config;
   const { agentEvent, userPrompt } = processedEvent;
@@ -28,6 +27,11 @@ export async function runAction(config: ActionConfig, processedEvent: ProcessedE
   await addEyeReaction(octokit, repo, agentEvent.github);
   const actionRunUrl = getActionRunUrl()
     
+  if (config.disabled) {
+    await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! You disabled me, so I'm not doing anything.`);
+    return;
+  }
+
   await postComment(octokit, repo, agentEvent.github, `Bork! It's Beagle, your furry Code Agent! Don't you worry, we'll get to the bottom of this issue... probably right after a nap. Follow the progress [here](${actionRunUrl}) anyway...`);
 
   // Clone repository
